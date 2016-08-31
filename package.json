@@ -1,0 +1,270 @@
+{
+    "author": "yuri@galanter.net",
+    "dependencies": {
+        "kiezelpay-core": "^2.0.4",
+        "pebble-clay": "^1.0.2",
+        "pebble-events": "^1.1.0",
+        "pebble-fctx": "^1.3.0",
+        "pebble-generic-weather": "^1.1.0",
+        "pebble-localize": "^0.1.0",
+        "pebble-simple-health": "^1.0.5"
+    },
+    "keywords": [],
+    "name": "cobblestyle-2",
+    "pebble": {
+        "capabilities": [
+            "location",
+            "configurable",
+            "health"
+        ],
+        "displayName": "CobbleStyle 2",
+        "enableMultiJS": true,
+        "messageKeys": [
+            "JSREADY",
+            "OWM_API_KEY",
+            "WU_API_KEY",
+            "FORECAST_API_KEY",
+            "TIME_DISPLAY",
+            "TEMPERATURE_FORMAT",
+            "WEATHER_PROVIDER",
+            "WEATHER_INTERVAL",
+            "SIDEBAR_LOCATION",
+            "LOCATION_SERVICE",
+            "LOCATION_LATITUDE",
+            "LOCATION_LONGITUDE",
+            "RANDOM_TEXT",
+            "WEATHER_STORAGE",
+            "GRAPHICAL_STEP_GOAL",
+            "SECONDARY_INFO_1",
+            "SECONDARY_INFO_2",
+            "SECONDARY_INFO_3",
+            "SECONDARY_INFO_4",
+            "SECONDARY_INFO_5",
+            "SECONDARY_INFO_6",
+            "ALT_TIMEZONE_NAME",
+            "ALT_TIMEZONE_OFFSET",
+            "PRIMARY_COLOR",
+            "SECONDARY_COLOR",
+            "SHOW_ANALOG_SECONDS",
+            "HOURS_MINUTES_SEPARATOR",
+            "BLUETOOTH_ALERT",
+            "BACKLIGHT_WHILE_CHARGING",
+            "BACK_COLOR",
+            "ICON_COLOR",
+            "COLOR_THEME",
+            "BUY_NOW",
+            "CUSTOM_STEP_GOAL",
+            "SECONDARY_INFO_7",
+            "SECONDARY_INFO_8",
+            "SECONDARY_INFO_9",
+            "SECONDARY_INFO_10",
+            "LANGUAGE"
+        ],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "data/BadApiKey.fpath",
+                    "name": "WEATHER_ICON_BAD_API_KEY",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/Disconnected.fpath",
+                    "name": "WEATHER_ICON_DISCONNECTED",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/Failed.fpath",
+                    "name": "WEATHER_ICON_FAILED",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/LocationUnavailable.fpath",
+                    "name": "WEATHER_ICON_LOCATION_UNAVAILABLE",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/NotYetFetched.fpath",
+                    "name": "WEATHER_ICON_NOT_YET_FETCHED",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/PendingWaiting.fpath",
+                    "name": "WEATHER_ICON_PENDING_WAITING",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/Unknown.fpath",
+                    "name": "WEATHER_ICON_UNKNOWN",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/Mist.fpath",
+                    "name": "WEATHER_ICON_MIST",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/Thunderstorm.fpath",
+                    "name": "WEATHER_ICON_THUNDERSTORM",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/Snow.fpath",
+                    "name": "WEATHER_ICON_SNOW",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/Rain.fpath",
+                    "name": "WEATHER_ICON_RAIN",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/ShowerRain.fpath",
+                    "name": "WEATHER_ICON_SHOWER_RAIN",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/BrokenClouds.fpath",
+                    "name": "WEATHER_ICON_BROKEN_CLOUDS",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/ScatteredClouds.fpath",
+                    "name": "WEATHER_ICON_SCATTERED_CLOUDS",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/FewCloudsNight.fpath",
+                    "name": "WEATHER_ICON_FEW_CLOUDS_NIGHT",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/FewCloudsDay.fpath",
+                    "name": "WEATHER_ICON_FEW_CLOUDS_DAY",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/ClearSkyNight.fpath",
+                    "name": "WEATHER_ICON_CLEAR_SKY_NIGHT",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/ClearSkyDay.fpath",
+                    "name": "WEATHER_ICON_CLEAR_SKY_DAY",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/BluetoothX.fpath",
+                    "name": "BLUETOOTH_ICON_DISCONNECTED",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/Bluetooth.fpath",
+                    "name": "BLUETOOTH_ICON_CONNECTED",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/RobotoCondensed-Bold.ffont",
+                    "name": "ROBOTO_CONDENSED_BOLD_FFONT",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "data/RobotoCondensed-Regular.ffont",
+                    "name": "ROBOTO_CONDENSED_REGULAR_FFONT",
+                    "targetPlatforms": null,
+                    "type": "raw"
+                },
+                {
+                    "file": "images/CobbleStyle2-Mini_Icon_PT.png",
+                    "menuIcon": true,
+                    "name": "MENU_IMAGE",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "data/loc_norwegian.bin",
+                    "name": "LOC_NORWEGIAN",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk",
+                        "diorite"
+                    ],
+                    "type": "raw"
+                },
+                {
+                    "file": "data/loc_hungarian.bin",
+                    "name": "LOC_HUNGARIAN",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk",
+                        "diorite"
+                    ],
+                    "type": "raw"
+                },
+                {
+                    "file": "data/loc_swedish.bin",
+                    "name": "LOC_SWEDISH",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk",
+                        "diorite"
+                    ],
+                    "type": "raw"
+                },
+                {
+                    "file": "data/loc_catalan.bin",
+                    "name": "LOC_CATALAN",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk",
+                        "diorite"
+                    ],
+                    "type": "raw"
+                },
+                {
+                    "file": "data/loc_dutch.bin",
+                    "name": "LOC_DUTCH",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk",
+                        "diorite"
+                    ],
+                    "type": "raw"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite"
+        ],
+        "uuid": "63dee1fa-91f0-4069-bbeb-091d29f88adb",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.37.0"
+}

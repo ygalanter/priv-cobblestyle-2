@@ -108,6 +108,7 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
   
   
   GRect bounds = layer_get_bounds(layer);
+  GRect u_bounds =  layer_get_unobstructed_bounds(layer);
   
   // main vertical separator line
   if (FLAG_SIDEBAR_LOCATION == SIDEBAR_LOCATION_RIGHT)
@@ -150,7 +151,7 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
   // battery
   uint8_t battery_y = bounds.size.h * 59/100;
   uint8_t battery_w = bounds.size.w * 9/100;
-  uint8_t battery_h = bounds.size.h * 12/100;
+  uint8_t battery_h = u_bounds.size.h * 12/100;
   if (FLAG_SIDEBAR_LOCATION == SIDEBAR_LOCATION_RIGHT) 
       x1 = bounds.size.w * 85/100;
   else
@@ -171,13 +172,13 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
     
     GPoint center;
     if (FLAG_SIDEBAR_LOCATION == SIDEBAR_LOCATION_RIGHT)
-      center.x =  bounds.size.w * 75 /100 /2;
+      center.x =  u_bounds.size.w * 75 /100 /2;
     else
-      center.x =  bounds.size.w * 25 /100 + bounds.size.w * 75 /100 /2; 
+      center.x =  bounds.size.w * 25 /100 + u_bounds.size.w * 75 /100 /2; 
     
-    center.y = bounds.size.h / 2;
+    center.y = u_bounds.size.h / 2;
     
-    uint8_t max_hand_length = bounds.size.w * 75 /100 /2;
+    uint8_t max_hand_length = u_bounds.size.w * 75 /100 /2;
     
     // ******************* hour hand
     int32_t angle = (TRIG_MAX_ANGLE * (((global_date_time->tm_hour % 12) * 6) + (global_date_time->tm_min / 10))) / (12 * 6);
@@ -415,6 +416,7 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
   uint8_t x1;
   
   GRect bounds = layer_get_bounds(layer);
+  GRect u_bounds =  layer_get_unobstructed_bounds(layer);
   
   // initializing FCTX library
   //fctx_init_context(&fctx, ctx);
@@ -509,7 +511,7 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
       }
          
       // displaying hours
-      fctx_draw_text(&fctx, s_time, ffont, bounds.size.h * 60/100, x1, bounds.size.h * 2 / 100, GTextAlignmentCenter, FTextAnchorTop);
+      fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 60/100, x1, u_bounds.size.h * 2 / 100, GTextAlignmentCenter, FTextAnchorTop);
       fctx_end_fill(&fctx);
  
   } else { // of we're not displaying digital time full screen - show it completely
@@ -533,14 +535,14 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
           }
              
           // displaying time
-          fctx_draw_text(&fctx, s_time, ffont, bounds.size.h * 26/100, x1, bounds.size.h/2, GTextAlignmentCenter, FTextAnchorMiddle);
+          fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 26/100, x1, u_bounds.size.h/2, GTextAlignmentCenter, FTextAnchorMiddle);
       }
       fctx_end_fill(&fctx);
       
     
       //======================== Secondary Info  ===========================================
-      draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, bounds.size.h * 19/100, FLAG_SECONDARY_INFO_2, global_date_time, color_icon);
-      draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, bounds.size.h * 83/100, FLAG_SECONDARY_INFO_5, global_date_time, color_icon);
+      draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, u_bounds.size.h * 19/100, FLAG_SECONDARY_INFO_2, global_date_time, color_icon);
+      draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, u_bounds.size.h * 83/100, FLAG_SECONDARY_INFO_5, global_date_time, color_icon);
    
   }
   
@@ -559,17 +561,17 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
     // outputting minutes
     fctx_begin_fill(&fctx);
     strftime(s_time, sizeof(s_time), "%M", global_date_time);
-    fctx_draw_text(&fctx, s_time, ffont, bounds.size.h * 60/100, x1, bounds.size.h * 52 / 100, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 60/100, x1, u_bounds.size.h * 52 / 100, GTextAlignmentCenter, FTextAnchorTop);
     fctx_end_fill(&fctx);
     
   } else { // if we're not in full screen - display secondary info as well
    
      //======================== Secondary Info  ===========================================
     #ifndef PBL_PLATFORM_APLITE
-    draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, bounds.size.h * 7/100, FLAG_SECONDARY_INFO_1, global_date_time, color_secondary);
-    draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, bounds.size.h * 31/100, FLAG_SECONDARY_INFO_3, global_date_time, color_secondary);
-    draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, bounds.size.h * 71/100, FLAG_SECONDARY_INFO_4, global_date_time, color_secondary);
-    draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, bounds.size.h * 95/100, FLAG_SECONDARY_INFO_6, global_date_time, color_secondary);
+    draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, u_bounds.size.h * 7/100, FLAG_SECONDARY_INFO_1, global_date_time, color_secondary);
+    draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, u_bounds.size.h * 31/100, FLAG_SECONDARY_INFO_3, global_date_time, color_secondary);
+    draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, u_bounds.size.h * 71/100, FLAG_SECONDARY_INFO_4, global_date_time, color_secondary);
+    draw_secondary_info(&fctx, bounds.size.h * 10/100, x1, u_bounds.size.h * 95/100, FLAG_SECONDARY_INFO_6, global_date_time, color_secondary);
     #endif
    
   }  

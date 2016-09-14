@@ -74,6 +74,9 @@ char SECONDARY_INFO[22];
 
 #ifndef PBL_PLATFORM_APLITE
   extern uint16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active;
+  #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+    extern uint32_t health_heart_rate;
+  #endif
   extern char ALT_TIMEZONE_NAME[4];
   extern int16_t ALT_TIMEZONE_OFFSET;
   extern uint8_t FLAG_GRAPHICAL_STEP_GOAL;
@@ -342,6 +345,11 @@ void draw_secondary_info(FContext *fctx, uint8_t font_size, uint8_t x, uint8_t y
          else snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "%s  %d.%d", _("MI"), health_distance / 1609, health_distance * 1000 / 1609 % 1000 / 100);
          utf_decode_to_upper(SECONDARY_INFO);
          break;
+       #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+       case SECONDARY_INFO_HEART_RATE:
+         snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "BPM  %lu", (uint32_t)health_heart_rate);
+         break;
+       #endif 
        case SECONDARY_INFO_NOTHING:
          strcpy(SECONDARY_INFO, "\0");
          break;

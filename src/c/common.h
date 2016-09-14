@@ -37,7 +37,9 @@
 #define SECONDARY_INFO_TIME_ACTIVE 16
 #define SECONDARY_INFO_CALORIES_REST 17
 #define SECONDARY_INFO_CALORIES_ACTIVE 18
-
+#if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+  #define SECONDARY_INFO_HEART_RATE 19
+#endif 
 
 #ifdef PBL_ROUND 
   #define SECONDARY_INFO_DAY_MONTH 12

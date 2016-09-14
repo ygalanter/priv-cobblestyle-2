@@ -900,13 +900,14 @@ module.exports = [
         ]
       },
       {
-          "type": "color",                    // custom colors
+          "type": "color",                    // custom colors (color watches)
           "messageKey": "PRIMARY_COLOR",
           "id": "PRIMARY_COLOR",   
           "defaultValue": "005500",
           "label": "Primary color",
           "sunlight": true,
-          "allowGray": true
+          "allowGray": true,
+          "capabilities": ["COLOR"]
         }, 
         {
           "type": "color",                    
@@ -915,7 +916,8 @@ module.exports = [
           "defaultValue": "00aa55",
           "label": "Secondary color",
           "sunlight": true,
-          "allowGray": true
+          "allowGray": true,
+          "capabilities": ["COLOR"]
         }, 
         {
           "type": "color",                    
@@ -924,7 +926,8 @@ module.exports = [
           "defaultValue": "000000",
           "label": "Background color",
           "sunlight": true,
-          "allowGray": true
+          "allowGray": true,
+          "capabilities": ["COLOR"]
         }, 
         {
           "type": "color",                    
@@ -933,7 +936,50 @@ module.exports = [
           "defaultValue": "ffffff",
           "label": "Icon color",
           "sunlight": true,
-          "allowGray": true        }
+          "allowGray": true,
+          "capabilities": ["COLOR"]
+        },
+      
+        {
+          "type": "color",                    // custom colors (bw watches)
+          "messageKey": "PRIMARY_COLOR",
+          "id": "PRIMARY_COLOR",   
+          "defaultValue": "a9a9a9",
+          "label": "Primary color",
+          "sunlight": true,
+          "allowGray": true,
+          "capabilities": ["NOT_COLOR"]
+        }, 
+        {
+          "type": "color",                    
+          "messageKey": "SECONDARY_COLOR",
+          "id": "SECONDARY_COLOR",   
+          "defaultValue": "ffffff",
+          "label": "Secondary color",
+          "sunlight": true,
+          "allowGray": true,
+          "capabilities": ["NOT_COLOR"]
+        }, 
+        {
+          "type": "color",                    
+          "messageKey": "BACK_COLOR",
+          "id": "BACK_COLOR",   
+          "defaultValue": "000000",
+          "label": "Background color",
+          "sunlight": true,
+          "allowGray": true,
+          "capabilities": ["NOT_COLOR"]
+        }, 
+        {
+          "type": "color",                    
+          "messageKey": "ICON_COLOR",
+          "id": "ICON_COLOR",   
+          "defaultValue": "ffffff",
+          "label": "Icon color",
+          "sunlight": true,
+          "allowGray": true,
+          "capabilities": ["NOT_COLOR"]
+        }
      
        
       ]
@@ -1005,6 +1051,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
+//             { 
+//               "label": "Heart Rate", 
+//               "value": "19" // #52 (- 48) = 4
+//             },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1080,6 +1130,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
+//             { 
+//               "label": "Heart Rate", 
+//               "value": "19" // #52 (- 48) = 4
+//             },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1154,6 +1208,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
+//             { 
+//               "label": "Heart Rate", 
+//               "value": "19" // #52 (- 48) = 4
+//             },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1229,6 +1287,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
+//             { 
+//               "label": "Heart Rate", 
+//               "value": "19" // #52 (- 48) = 4
+//             },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1304,6 +1366,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
+//             { 
+//               "label": "Heart Rate", 
+//               "value": "19" // #52 (- 48) = 4
+//             },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1379,6 +1445,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
+//             { 
+//               "label": "Heart Rate", 
+//               "value": "19" // #52 (- 48) = 4
+//             },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4

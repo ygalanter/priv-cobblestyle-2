@@ -36,6 +36,9 @@ uint8_t global_battery_percent, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5, FL
   uint8_t  FLAG_GRAPHICAL_STEP_GOAL, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_LANGUAGE;
   int16_t ALT_TIMEZONE_OFFSET;
   uint16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active, CUSTOM_STEP_GOAL;
+  #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+  uint32_t health_heart_rate;
+  #endif
   int32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
   char RANDOM_TEXT[22];
   char ALT_TIMEZONE_NAME[4];
@@ -57,13 +60,16 @@ char weather_api_key[3][33] = {"\0","\0","\0"};
 #ifndef PBL_PLATFORM_APLITE
 void health_metrics_update(){
   
-
   health_steps =  health_get_metric_sum(HealthMetricStepCount);
   health_step_goal = CUSTOM_STEP_GOAL == 0? health_get_metric_goal(HealthMetricStepCount) : CUSTOM_STEP_GOAL;
   health_distance = health_get_metric_sum(HealthMetricWalkedDistanceMeters);
   health_time_active = health_get_metric_sum(HealthMetricActiveSeconds);
   health_calories_rest = health_get_metric_sum(HealthMetricRestingKCalories);
   health_calories_active = health_get_metric_sum(HealthMetricActiveKCalories);
+  
+  #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+     health_heart_rate =  health_service_peek_current_value(HealthMetricHeartRateBPM);
+ #endif
   
 
 }
@@ -625,8 +631,13 @@ void handle_init() {
     // Initiate KiezelPay
     kiezelpay_init();
   
+    // Set HRM sample period
+    #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+    ///health_service_set_heart_rate_sample_period(10); //10 seconds
+    #endif
     health_init(health_metrics_update);
     health_metrics_update();
+  
     events_app_message_request_inbox_size(500);
   #else
     events_app_message_request_inbox_size(300);
@@ -651,6 +662,11 @@ void handle_deinit(void) {
   generic_weather_deinit();
   #ifndef PBL_PLATFORM_APLITE
     kiezelpay_deinit();
+  
+    #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+    ///health_service_set_heart_rate_sample_period(0);
+    #endif
+  
     health_deinit();
   #endif
   

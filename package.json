@@ -1,12 +1,12 @@
 {
     "author": "yuri@galanter.net",
     "dependencies": {
-        "kiezelpay-core": "^2.0.4",
+        "kiezelpay-core": "^2.0.12 ",
         "pebble-clay": "^1.0.2",
         "pebble-events": "^1.1.0",
-        "pebble-fctx": "^1.3.0",
-        "pebble-generic-weather": "^1.1.0",
-        "pebble-localize": "^0.1.0",
+        "pebble-fctx": "^1.5.0",
+        "pebble-generic-weather": "^1.1.2",
+        "pebble-localize": "^0.1.1",
         "pebble-simple-health": "^1.0.5"
     },
     "keywords": [],
@@ -266,5 +266,5 @@
             "watchface": true
         }
     },
-    "version": "1.37.0"
+    "version": "1.39.0"
 }

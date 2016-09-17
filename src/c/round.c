@@ -31,13 +31,13 @@ void fctx_init_context_my(FContext* fctx, GContext* gctx) {
 
 
 
-uint32_t string_width_radial(
+uint_least32_t string_width_radial(
     FContext* fctx,
     const char* text,
     FFont* font,
-    int16_t font_size,
+    int_least16_t font_size,
     FPoint center,
-    uint16_t radius,
+    uint_least16_t radius,
     bool clockwise)
 {
       fixed_t s;
@@ -51,7 +51,7 @@ uint32_t string_width_radial(
     arc = 0;
     for (p = text; *p; ++p) {
         if (*p == 1) 
-            {glyph = ffont_glyph_info(font, ((uint16_t)(*p) << 8) | *(p + 1)); p++;}
+            {glyph = ffont_glyph_info(font, ((uint_least16_t)(*p) << 8) | *(p + 1)); p++;}
          else
             {glyph = ffont_glyph_info(font, *p);}
         if (glyph && p!=text) {
@@ -68,10 +68,10 @@ void draw_string_radial(
     FContext* fctx,
     const char* text,
     FFont* font,
-    int16_t font_size,
+    int_least16_t font_size,
     FPoint center,
-    uint16_t radius,
-    uint32_t angle,
+    uint_least16_t radius,
+    uint_least32_t angle,
     bool clockwise)
   
   
@@ -102,7 +102,7 @@ void draw_string_radial(
     for (p = text; *p; ++p) {
      
          if (*p == 1) 
-            {glyph = ffont_glyph_info(font, ((uint16_t)(*p) << 8) | *(p + 1)); p++;}
+            {glyph = ffont_glyph_info(font, ((uint_least16_t)(*p) << 8) | *(p + 1)); p++;}
          else
             {glyph = ffont_glyph_info(font, *p);}
       
@@ -132,40 +132,40 @@ void draw_string_radial(
 // graphics variables
 FFont *ffont;
 
-extern uint8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_SIDEBAR_LOCATION, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_SECONDARY_INFO_7, FLAG_SECONDARY_INFO_8, FLAG_SECONDARY_INFO_9, FLAG_SECONDARY_INFO_10;
-extern uint8_t FLAG_SHOW_ANALOG_SECONDS, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5, FLAG_GRAPHICAL_STEP_GOAL,global_battery_percent,FLAG_HOURS_MINUTES_SEPARATOR, FLAG_LANGUAGE;
+extern uint_least8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_SIDEBAR_LOCATION, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_SECONDARY_INFO_7, FLAG_SECONDARY_INFO_8, FLAG_SECONDARY_INFO_9, FLAG_SECONDARY_INFO_10;
+extern uint_least8_t FLAG_SHOW_ANALOG_SECONDS, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5, FLAG_GRAPHICAL_STEP_GOAL,global_battery_percent,FLAG_HOURS_MINUTES_SEPARATOR, FLAG_LANGUAGE;
 extern FPath *weather_icon, *bluetooth_icon;
-extern int16_t temp_kelvin, temp_celcius, temp_fahrenheit;
-extern uint16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active;
-extern int16_t ALT_TIMEZONE_OFFSET;
-extern int32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
+extern int_least16_t temp_kelvin, temp_celcius, temp_fahrenheit;
+extern uint_least16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active;
+extern int_least16_t ALT_TIMEZONE_OFFSET;
+extern int_least32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
 extern char LOCATION_NAME[22], ALT_TIMEZONE_NAME[4], RANDOM_TEXT[22];
-char SECONDARY_INFO[22];
 
-GPoint get_point_from_angle(int32_t degree_angle, uint8_t length, GPoint offset) {
+
+GPoint get_point_from_angle(int_least32_t degree_angle, uint_least8_t length, GPoint offset) {
   
    return (GPoint){
-      .x = (int16_t)(sin_lookup(DEG_TO_TRIGANGLE(degree_angle)) * (int32_t)(length) / TRIG_MAX_RATIO) + offset.x,
-      .y = (int16_t)(-cos_lookup(DEG_TO_TRIGANGLE(degree_angle)) * (int32_t)(length) / TRIG_MAX_RATIO) + offset.y
+      .x = (int_least16_t)(sin_lookup(DEG_TO_TRIGANGLE(degree_angle)) * (int_least32_t)(length) / TRIG_MAX_RATIO) + offset.x,
+      .y = (int_least16_t)(-cos_lookup(DEG_TO_TRIGANGLE(degree_angle)) * (int_least32_t)(length) / TRIG_MAX_RATIO) + offset.y
    };
   
    
   
 }
 
-void draw_angled_line(GContext *ctx, int32_t degree_angle, uint8_t length, GPoint center){
+void draw_angled_line(GContext *ctx, int_least32_t degree_angle, uint_least8_t length, GPoint center){
    GPoint hand_endpoint = get_point_from_angle(degree_angle, length, center);
    GPoint hand_beginpoint = get_point_from_angle(degree_angle, length * 87/100, center);
    graphics_draw_line(ctx, hand_beginpoint, hand_endpoint);
 }
 
-void draw_line_with_color_and_width(GContext *ctx, GColor color, uint8_t width, GPoint start_point, GPoint end_point){
+void draw_line_with_color_and_width(GContext *ctx, GColor color, uint_least8_t width, GPoint start_point, GPoint end_point){
    graphics_context_set_stroke_color(ctx, color);
    graphics_context_set_stroke_width(ctx, width);
    graphics_draw_line(ctx, start_point, end_point);
 }
 
-void draw_angled_icon(FContext *fctx, FPath *icon, uint8_t scale_x, uint8_t scale_y, uint8_t offset_x, uint8_t offset_y, int16_t angle) {
+void draw_angled_icon(FContext *fctx, FPath *icon, uint_least8_t scale_x, uint_least8_t scale_y, uint_least8_t offset_x, uint_least8_t offset_y, int_least16_t angle) {
    fctx_set_scale(fctx, FPoint(100,100), FPoint(scale_x, scale_y));
    fctx_set_rotation(fctx, DEG_TO_TRIGANGLE(angle));
    fctx_set_offset(fctx, FPointI(offset_x,  offset_y));
@@ -197,7 +197,7 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
     graphics_draw_arc(ctx, Circ, GOvalScaleModeFitCircle, 0, TRIG_MAX_ANGLE);
     
   } else { //otherwise spilt between goal & steps made
-    uint16_t health_goal_percent = TRIG_MAX_ANGLE * health_steps / health_step_goal;
+    uint_least16_t health_goal_percent = TRIG_MAX_ANGLE * health_steps / health_step_goal;
     
      // second part of circle
     graphics_context_set_stroke_color(ctx, color_primary);
@@ -216,7 +216,7 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
     graphics_context_set_stroke_color(ctx, color_primary);
     graphics_context_set_stroke_width(ctx, 1);
   
-    uint8_t max_hand_length = bounds.size.w * 93 /100 /2;
+    uint_least8_t max_hand_length = bounds.size.w * 93 /100 /2;
   
     draw_angled_line(ctx, 0 + 43, max_hand_length, center);
     draw_angled_line(ctx, 90 - 10, max_hand_length, center);
@@ -291,8 +291,8 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
 
 
 
-void draw_secondary_info(FContext *fctx, uint8_t position, uint8_t secondary_info_type, GRect bounds, struct tm *my_time, GColor color){
-  
+void draw_secondary_info(FContext *fctx, uint_least8_t position, uint_least8_t secondary_info_type, GRect bounds, struct tm *my_time, GColor color){
+   char SECONDARY_INFO[22];
    char format[] = "%l:%M %P";
    time_t nowg;
    struct tm *tg;
@@ -414,7 +414,7 @@ void draw_secondary_info(FContext *fctx, uint8_t position, uint8_t secondary_inf
     fctx_begin_fill(fctx);
     fctx_set_fill_color(fctx, color);  
   
-     uint8_t str_len = strlen(SECONDARY_INFO), font_size;
+     uint_least8_t str_len = strlen(SECONDARY_INFO), font_size;
   
      switch (position) {
         case INFO_POSITION_TOP:
@@ -502,8 +502,6 @@ void draw_secondary_info(FContext *fctx, uint8_t position, uint8_t secondary_inf
      fctx_end_fill(fctx);
      SECONDARY_INFO[0] = '\0'; //resetting info so it won't spoil other displays
 }
-
-
 
 
 void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time) {

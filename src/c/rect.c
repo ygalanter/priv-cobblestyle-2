@@ -61,27 +61,27 @@ void fctx_init_context_my(FContext* fctx, GContext* gctx) {
 FFont *ffont;
 
 
-extern uint8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_SIDEBAR_LOCATION;
-extern uint8_t FLAG_SHOW_ANALOG_SECONDS, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5;
+extern uint_least8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_SIDEBAR_LOCATION;
+extern uint_least8_t FLAG_SHOW_ANALOG_SECONDS, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5;
 
-extern uint8_t global_battery_percent;
+extern uint_least8_t global_battery_percent;
 extern FPath *weather_icon, *bluetooth_icon;
-extern int16_t temp_kelvin, temp_celcius, temp_fahrenheit;
+extern int_least16_t temp_kelvin, temp_celcius, temp_fahrenheit;
 extern char LOCATION_NAME[22];
-extern uint8_t FLAG_HOURS_MINUTES_SEPARATOR, FLAG_LANGUAGE;
+extern uint_least8_t FLAG_HOURS_MINUTES_SEPARATOR, FLAG_LANGUAGE;
 
 char SECONDARY_INFO[22];
 
 #ifndef PBL_PLATFORM_APLITE
-  extern uint16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active;
+  extern uint_least16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active;
   #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
-    extern uint32_t health_heart_rate;
+    extern uint_least32_t health_heart_rate;
   #endif
   extern char ALT_TIMEZONE_NAME[4];
-  extern int16_t ALT_TIMEZONE_OFFSET;
-  extern uint8_t FLAG_GRAPHICAL_STEP_GOAL;
-  extern uint8_t FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6;
-  extern int32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
+  extern int_least16_t ALT_TIMEZONE_OFFSET;
+  extern uint_least8_t FLAG_GRAPHICAL_STEP_GOAL;
+  extern uint_least8_t FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6;
+  extern int_least32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
   extern char RANDOM_TEXT[22];
 #endif 
 
@@ -107,7 +107,7 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
   
   FContext fctx;
   
-  uint8_t x1, x2;
+  uint_least8_t x1, x2;
   
   
   GRect bounds = layer_get_bounds(layer);
@@ -127,7 +127,7 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
       graphics_context_set_fill_color(ctx, color_secondary);
       graphics_fill_rect(ctx, GRect(x1, bounds.origin.y, 4, bounds.size.h), 0, GCornerNone);
     }  else { //otherwise spilt between goal & steps made
-      uint16_t health_goal_percent = bounds.size.h * health_steps / health_step_goal;
+      uint_least16_t health_goal_percent = bounds.size.h * health_steps / health_step_goal;
       graphics_context_set_fill_color(ctx, color_primary);
       graphics_fill_rect(ctx, GRect(x1, bounds.origin.y, 4, bounds.size.h - health_goal_percent), 0, GCornerNone); // still to go
       graphics_context_set_fill_color(ctx, color_secondary);
@@ -152,9 +152,9 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
   graphics_draw_line(ctx, GPoint(x1, bounds.size.h * 84/100), GPoint(x2, bounds.size.h * 84/100));
   
   // battery
-  uint8_t battery_y = bounds.size.h * 59/100;
-  uint8_t battery_w = bounds.size.w * 9/100;
-  uint8_t battery_h = u_bounds.size.h * 12/100;
+  uint_least8_t battery_y = bounds.size.h * 59/100;
+  uint_least8_t battery_w = bounds.size.w * 9/100;
+  uint_least8_t battery_h = u_bounds.size.h * 12/100;
   if (FLAG_SIDEBAR_LOCATION == SIDEBAR_LOCATION_RIGHT) 
       x1 = bounds.size.w * 85/100;
   else
@@ -181,14 +181,14 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
     
     center.y = u_bounds.size.h / 2;
     
-    uint8_t max_hand_length = u_bounds.size.w * 75 /100 /2;
+    uint_least8_t max_hand_length = u_bounds.size.w * 75 /100 /2;
     
     // ******************* hour hand
-    int32_t angle = (TRIG_MAX_ANGLE * (((global_date_time->tm_hour % 12) * 6) + (global_date_time->tm_min / 10))) / (12 * 6);
+    int_least32_t angle = (TRIG_MAX_ANGLE * (((global_date_time->tm_hour % 12) * 6) + (global_date_time->tm_min / 10))) / (12 * 6);
   
     GPoint hand_endpoint = {
-      .x = (int16_t)(sin_lookup(angle) * (int32_t)(max_hand_length * 70/100) / TRIG_MAX_RATIO) + center.x,
-      .y = (int16_t)(-cos_lookup(angle) * (int32_t)(max_hand_length * 70/100) / TRIG_MAX_RATIO) + center.y,
+      .x = (int_least16_t)(sin_lookup(angle) * (int_least32_t)(max_hand_length * 70/100) / TRIG_MAX_RATIO) + center.x,
+      .y = (int_least16_t)(-cos_lookup(angle) * (int_least32_t)(max_hand_length * 70/100) / TRIG_MAX_RATIO) + center.y,
     };
     
     //color under hand
@@ -204,8 +204,8 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
     angle = TRIG_MAX_ANGLE * global_date_time->tm_min / 60;
 
     
-    hand_endpoint.x = (int16_t)(sin_lookup(angle) * (int32_t)max_hand_length / TRIG_MAX_RATIO) + center.x;
-    hand_endpoint.y = (int16_t)(-cos_lookup(angle) * (int32_t)max_hand_length / TRIG_MAX_RATIO) + center.y;
+    hand_endpoint.x = (int_least16_t)(sin_lookup(angle) * (int_least32_t)max_hand_length / TRIG_MAX_RATIO) + center.x;
+    hand_endpoint.y = (int_least16_t)(-cos_lookup(angle) * (int_least32_t)max_hand_length / TRIG_MAX_RATIO) + center.y;
     
     //color under hand
     graphics_context_set_stroke_color(ctx, color_back);
@@ -222,8 +222,8 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
     if (FLAG_SHOW_ANALOG_SECONDS == 1) {  
       angle = TRIG_MAX_ANGLE * global_date_time->tm_sec / 60;
       
-      hand_endpoint.x = (int16_t)(sin_lookup(angle) * (int32_t)max_hand_length / TRIG_MAX_RATIO) + center.x;
-      hand_endpoint.y = (int16_t)(-cos_lookup(angle) * (int32_t)max_hand_length / TRIG_MAX_RATIO) + center.y;
+      hand_endpoint.x = (int_least16_t)(sin_lookup(angle) * (int_least32_t)max_hand_length / TRIG_MAX_RATIO) + center.x;
+      hand_endpoint.y = (int_least16_t)(-cos_lookup(angle) * (int_least32_t)max_hand_length / TRIG_MAX_RATIO) + center.y;
       
       graphics_context_set_stroke_color(ctx, color_secondary);  
       graphics_draw_line(ctx, center, hand_endpoint);
@@ -281,7 +281,7 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
 
 }
 
-void draw_secondary_info(FContext *fctx, uint8_t font_size, uint8_t x, uint8_t y, uint8_t secondary_info_type, struct tm *my_time, GColor color){
+void draw_secondary_info(FContext *fctx, uint_least8_t font_size, uint_least8_t x, uint_least8_t y, uint_least8_t secondary_info_type, struct tm *my_time, GColor color){
   
    #ifndef PBL_PLATFORM_APLITE
    char format[] = "%A:%B";
@@ -347,7 +347,7 @@ void draw_secondary_info(FContext *fctx, uint8_t font_size, uint8_t x, uint8_t y
          break;
        #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
        case SECONDARY_INFO_HEART_RATE:
-         snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "BPM  %lu", (uint32_t)health_heart_rate);
+         snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "BPM  %lu", (uint_least32_t)health_heart_rate);
          break;
        #endif 
        case SECONDARY_INFO_NOTHING:
@@ -389,7 +389,7 @@ void draw_secondary_info(FContext *fctx, uint8_t font_size, uint8_t x, uint8_t y
      fctx_begin_fill(fctx);
      fctx_set_fill_color(fctx, color);  
   
-     uint8_t str_len = strlen(SECONDARY_INFO);
+     uint_least8_t str_len = strlen(SECONDARY_INFO);
      if (str_len > 14) {
        font_size = font_size * 14 / str_len;
      }
@@ -421,7 +421,7 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
   char s_battery[] = "100";
   char s_temp[6];
   
-  uint8_t x1;
+  uint_least8_t x1;
   
   GRect bounds = layer_get_bounds(layer);
   GRect u_bounds =  layer_get_unobstructed_bounds(layer);

@@ -16,30 +16,30 @@ FPath *weather_icon, *bluetooth_icon;
 extern FFont *ffont;
 Window *s_window;
 Layer *s_main_layer;
-uint8_t  *buffer, *buffer_weather, *buffer_bluetooth;
+uint_least8_t  *buffer, *buffer_weather, *buffer_bluetooth;
 GBitmap *fctx_buffer;
 
-int32_t COORDINATES_LATITUDE, COORDINATES_LONGITUDE;
-int16_t temp_kelvin, temp_celcius, temp_fahrenheit;
-uint8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_WEATHER_INTERVAL, FLAG_LOCATION_SERVICE, FLAG_HOURS_MINUTES_SEPARATOR;
-uint8_t global_battery_percent, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5, FLAG_BLUETOOTH_ALERT, FLAG_BACKLIGHT_WHILE_CHARGING, FLAG_SHOW_ANALOG_SECONDS;
+int_least32_t COORDINATES_LATITUDE, COORDINATES_LONGITUDE;
+int_least16_t temp_kelvin, temp_celcius, temp_fahrenheit;
+uint_least8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_WEATHER_INTERVAL, FLAG_LOCATION_SERVICE, FLAG_HOURS_MINUTES_SEPARATOR;
+uint_least8_t global_battery_percent, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5, FLAG_BLUETOOTH_ALERT, FLAG_BACKLIGHT_WHILE_CHARGING, FLAG_SHOW_ANALOG_SECONDS;
 
 
 
 #ifdef PBL_RECT
-  uint8_t FLAG_SIDEBAR_LOCATION;
+  uint_least8_t FLAG_SIDEBAR_LOCATION;
 #else
-  uint8_t FLAG_SECONDARY_INFO_7, FLAG_SECONDARY_INFO_8, FLAG_SECONDARY_INFO_9, FLAG_SECONDARY_INFO_10;
+  uint_least8_t FLAG_SECONDARY_INFO_7, FLAG_SECONDARY_INFO_8, FLAG_SECONDARY_INFO_9, FLAG_SECONDARY_INFO_10;
 #endif
 
 #ifndef PBL_PLATFORM_APLITE
-  uint8_t  FLAG_GRAPHICAL_STEP_GOAL, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_LANGUAGE;
-  int16_t ALT_TIMEZONE_OFFSET;
-  uint16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active, CUSTOM_STEP_GOAL;
+  uint_least8_t  FLAG_GRAPHICAL_STEP_GOAL, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_LANGUAGE;
+  int_least16_t ALT_TIMEZONE_OFFSET;
+  uint_least16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active, CUSTOM_STEP_GOAL;
   #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
-  uint32_t health_heart_rate;
+  uint_least32_t health_heart_rate;
   #endif
-  int32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
+  int_least32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
   char RANDOM_TEXT[22];
   char ALT_TIMEZONE_NAME[4];
 #endif
@@ -69,6 +69,7 @@ void health_metrics_update(){
   
   #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
      health_heart_rate =  health_service_peek_current_value(HealthMetricHeartRateBPM);
+     layer_mark_dirty(s_main_layer); // for EXTREME TEST - to update UI every time Heart rate changes
  #endif
   
 
@@ -97,7 +98,7 @@ static bool kiezelpay_event_callback(kiezelpay_event e, void* extra_data) {
 
 // loading weather icon depending on coditions
 void set_weather_icon(GenericWeatherConditionCode condition_code, bool is_day) {
-  uint32_t resource_id;
+  uint_least32_t resource_id;
   
     switch (condition_code){
       case GenericWeatherConditionClearSky:
@@ -160,7 +161,7 @@ static void weather_callback(GenericWeatherInfo *info, GenericWeatherStatus stat
       copy_weather(info);  // storing weather into local variables
       persist_write_data(MESSAGE_KEY_WEATHER_STORAGE, info, sizeof(GenericWeatherInfo)); // and persiting it
   } else {
-     uint32_t resource_id;
+     uint_least32_t resource_id;
       switch(status) {
         case GenericWeatherStatusNotYetFetched:
           resource_id=RESOURCE_ID_WEATHER_ICON_NOT_YET_FETCHED;
@@ -286,9 +287,9 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 
 bool need_update;
 
-int32_t get_int_from_inbox(DictionaryIterator *iterator, uint32_t msg_key, int32_t original_value) {
+int_least32_t get_int_from_inbox(DictionaryIterator *iterator, uint_least32_t msg_key, int_least32_t original_value) {
   
-   int32_t value = original_value;
+   int_least32_t value = original_value;
    Tuple *t = dict_find(iterator, msg_key); 
   
    if(t) { 
@@ -633,7 +634,7 @@ void handle_init() {
   
     // Set HRM sample period
     #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
-    ///health_service_set_heart_rate_sample_period(10); //10 seconds
+    health_service_set_heart_rate_sample_period(1); // Every Second: STRESS TEST!!!
     #endif
     health_init(health_metrics_update);
     health_metrics_update();
@@ -664,7 +665,7 @@ void handle_deinit(void) {
     kiezelpay_deinit();
   
     #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
-    ///health_service_set_heart_rate_sample_period(0);
+    health_service_set_heart_rate_sample_period(0);
     #endif
   
     health_deinit();

@@ -84,7 +84,7 @@ FFont* ffont_load_from_resource(uint32_t resource_id);
 // Draws antialiased text with given font, size, position and allignment
 void fctx_draw_text(FContext *fctx, char * text, FFont* ffont, int16_t size, int16_t x, int16_t y, GTextAlignment text_align, FTextAnchor text_anchor);
 
-FPath* fpath_create_from_resource_with_buffer(uint32_t resource_id, uint8_t *buffer);
+FPath* fpath_create_from_resource_with_buffer(uint32_t resource_id, uint_least8_t *buffer);
 
 //converts text to uppercase (with unicode fix)
 void utf_decode_to_upper(char *sPtr);
@@ -100,12 +100,12 @@ void utf_decode_to_upper(char *sPtr);
 #define LANGUAGE_CATALAN 4
 #define LANGUAGE_DUTCH 5
 
-void translate_full_day_name(uint8_t day_no, char *translation);
+void translate_full_day_name(uint_least8_t day_no, char *translation);
 #ifdef PBL_RECT
-void translate_short_day_name(uint8_t day_no, char *translation);
+void translate_short_day_name(uint_least8_t day_no, char *translation);
 #endif
-void translate_short_month_name(uint8_t month_no, char *translation);
-void set_language(uint8_t language_id);
+void translate_short_month_name(uint_least8_t month_no, char *translation);
+void set_language(uint_least8_t language_id);
 
                                     
 #endif

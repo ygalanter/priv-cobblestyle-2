@@ -509,8 +509,8 @@ static void window_load(Window *window) {
   
    #ifndef PBL_PLATFORM_APLITE
   char *sys_locale = setlocale(LC_ALL, "");
-  // we're not supporting chinese yet
-  if (strcmp("zh_CN", sys_locale) == 0|| strcmp("zh_TW", sys_locale) == 0) {
+  // we're not supporting chinese - or Korean yet
+  if (strcmp("zh_CN", sys_locale) == 0 || strcmp("zh_TW", sys_locale) == 0 || strcmp("ko_KR", sys_locale) == 0) {
     setlocale(LC_ALL, "en_US");
   }
   #endif

@@ -6,10 +6,16 @@
 #include <pebble-fctx/fpath.h>
 
 #ifdef PBL_PLATFORM_APLITE
-  #define FONT_BUFFER_SIZE 4648
+  #define FONT_BUFFER_SIZE 2452
 #else
   #include <pebble-localize/pebble-localize.h>
-  #define FONT_BUFFER_SIZE 10564
+
+  #ifdef PBL_PLATFORM_DIORITE
+    #define FONT_BUFFER_SIZE 6636
+  #else
+    #define FONT_BUFFER_SIZE 10564
+  #endif
+  
 #endif
 
 

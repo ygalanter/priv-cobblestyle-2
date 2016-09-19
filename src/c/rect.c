@@ -519,7 +519,11 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
       }
          
       // displaying hours
+      #ifdef PBL_COLOR //since using different fonts on color & bw watches
       fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 60/100, x1, u_bounds.size.h * 2 / 100, GTextAlignmentCenter, FTextAnchorTop);
+      #else
+      fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 50/100, x1 +  bounds.size.w * 37/100, u_bounds.size.h * 2 / 20, GTextAlignmentRight, FTextAnchorTop);
+      #endif
       fctx_end_fill(&fctx);
  
   } else { // of we're not displaying digital time full screen - show it completely
@@ -543,7 +547,11 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
           }
              
           // displaying time
+          #ifdef PBL_COLOR //since using different fonts on color & bw watches
           fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 26/100, x1, u_bounds.size.h/2, GTextAlignmentCenter, FTextAnchorMiddle);
+          #else
+          fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 23/100, x1, u_bounds.size.h/2, GTextAlignmentCenter, FTextAnchorMiddle);
+          #endif
       }
       fctx_end_fill(&fctx);
       
@@ -569,7 +577,11 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
     // outputting minutes
     fctx_begin_fill(&fctx);
     strftime(s_time, sizeof(s_time), "%M", global_date_time);
+    #ifdef PBL_COLOR //since using different fonts on color & bw watches
     fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 60/100, x1, u_bounds.size.h * 52 / 100, GTextAlignmentCenter, FTextAnchorTop);
+    #else
+    fctx_draw_text(&fctx, s_time, ffont, u_bounds.size.h * 50/100, x1 +  bounds.size.w * 37/100, u_bounds.size.h * 52 / 92, GTextAlignmentRight, FTextAnchorTop);
+    #endif
     fctx_end_fill(&fctx);
     
   } else { // if we're not in full screen - display secondary info as well

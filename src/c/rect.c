@@ -306,7 +306,7 @@ void draw_secondary_info(FContext *fctx, uint_least8_t font_size, uint_least8_t 
          #ifndef PBL_PLATFORM_APLITE
            strcpy(SECONDARY_INFO, RANDOM_TEXT);  
          #else
-           strcpy(SECONDARY_INFO, "COBBLESTYLE 2");
+           strcpy(SECONDARY_INFO, "CSTYLE 2");
          #endif
          break;
      
@@ -390,9 +390,15 @@ void draw_secondary_info(FContext *fctx, uint_least8_t font_size, uint_least8_t 
      fctx_set_fill_color(fctx, color);  
   
      uint_least8_t str_len = strlen(SECONDARY_INFO);
+     #ifdef PBL_COLOR
      if (str_len > 14) {
        font_size = font_size * 14 / str_len;
      }
+     #else
+     if (str_len > 10) {
+       font_size = font_size * 10 / str_len;
+     }
+     #endif
   
      fctx_draw_text(fctx, SECONDARY_INFO, ffont, font_size, x, y, GTextAlignmentCenter, FTextAnchorMiddle);
      fctx_end_fill(fctx);

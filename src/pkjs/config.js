@@ -1051,10 +1051,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
-//             { 
-//               "label": "Heart Rate", 
-//               "value": "19" // #52 (- 48) = 4
-//             },
+            { 
+              "label": "Heart Rate (if supported)", 
+              "value": "19" // #52 (- 48) = 4
+            },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1130,10 +1130,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
-//             { 
-//               "label": "Heart Rate", 
-//               "value": "19" // #52 (- 48) = 4
-//             },
+            { 
+              "label": "Heart Rate (if supported)", 
+              "value": "19" // #52 (- 48) = 4
+            },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1208,10 +1208,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
-//             { 
-//               "label": "Heart Rate", 
-//               "value": "19" // #52 (- 48) = 4
-//             },
+            { 
+              "label": "Heart Rate (if supported)", 
+              "value": "19" // #52 (- 48) = 4
+            },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1287,10 +1287,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
-//             { 
-//               "label": "Heart Rate", 
-//               "value": "19" // #52 (- 48) = 4
-//             },
+            { 
+              "label": "Heart Rate (if supported)", 
+              "value": "19" // #52 (- 48) = 4
+            },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1366,10 +1366,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
-//             { 
-//               "label": "Heart Rate", 
-//               "value": "19" // #52 (- 48) = 4
-//             },
+            { 
+              "label": "Heart Rate (if supported)", 
+              "value": "19" // #52 (- 48) = 4
+            },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4
@@ -1445,10 +1445,10 @@ module.exports = [
               "label": "Calories burned active", 
               "value": "18" // #52 (- 48) = 4
             },
-//             { 
-//               "label": "Heart Rate", 
-//               "value": "19" // #52 (- 48) = 4
-//             },
+            { 
+              "label": "Heart Rate (if supported)", 
+              "value": "19" // #52 (- 48) = 4
+            },
             { 
               "label": "Step Count", 
               "value": "4" // #52 (- 48) = 4

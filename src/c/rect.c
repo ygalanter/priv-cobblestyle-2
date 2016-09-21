@@ -356,7 +356,6 @@ void draw_secondary_info(FContext *fctx, uint_least8_t font_size, uint_least8_t 
        case SECONDARY_INFO_SECOND_TIMEZONE:
          nowg = time(NULL) + ALT_TIMEZONE_OFFSET * 60;
          tg = gmtime(&nowg); 
-     
          strcpy(SECONDARY_INFO, ALT_TIMEZONE_NAME); //prepending with timezone name
          SECONDARY_INFO[3]=' '; SECONDARY_INFO[4]=' ';
          

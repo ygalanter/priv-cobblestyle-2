@@ -134,11 +134,11 @@ FFont *ffont;
 
 extern uint_least8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_SIDEBAR_LOCATION, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_SECONDARY_INFO_7, FLAG_SECONDARY_INFO_8, FLAG_SECONDARY_INFO_9, FLAG_SECONDARY_INFO_10;
 extern uint_least8_t FLAG_SHOW_ANALOG_SECONDS, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5, FLAG_GRAPHICAL_STEP_GOAL,global_battery_percent,FLAG_HOURS_MINUTES_SEPARATOR, FLAG_LANGUAGE;
-extern FPath *weather_icon, *bluetooth_icon;
-extern int_least16_t temp_kelvin, temp_celcius, temp_fahrenheit;
 extern uint_least16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active;
+extern int_least16_t temp_kelvin, temp_celcius, temp_fahrenheit;
 extern int_least16_t ALT_TIMEZONE_OFFSET;
 extern int_least32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
+extern FPath *weather_icon, *bluetooth_icon;
 extern char LOCATION_NAME[22], ALT_TIMEZONE_NAME[4], RANDOM_TEXT[22];
 
 
@@ -292,12 +292,11 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
 
 
 void draw_secondary_info(FContext *fctx, uint_least8_t position, uint_least8_t secondary_info_type, GRect bounds, struct tm *my_time, GColor color){
-   char SECONDARY_INFO[22];
    char format[] = "%l:%M %P";
    time_t nowg;
    struct tm *tg;
    GPoint center = grect_center_point(&bounds);
-  
+   char SECONDARY_INFO[22];
        
          // building format 12h/24h
          if (clock_is_24h_style()) {
@@ -338,19 +337,16 @@ void draw_secondary_info(FContext *fctx, uint_least8_t position, uint_least8_t s
          snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "%d", health_steps);
          break;
        case SECONDARY_INFO_DISTANCE_METERS:
-         if (FLAG_LANGUAGE == LANGUAGE_SYSTEM) snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "M  %d", health_distance);
-         else snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "%s  %d", _("M"), health_distance);
+         snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "M  %d", health_distance);
          break;
        case SECONDARY_INFO_DISTANCE_KM:
-         if (FLAG_LANGUAGE == LANGUAGE_SYSTEM) snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "KM  %d.%d", health_distance / 1000, health_distance % 1000 / 100);
-         else snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "%s  %d.%d", _("KM"), health_distance / 1000, health_distance % 1000 / 100);
+         snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "KM  %d.%d", health_distance / 1000, health_distance % 1000 / 100);
          break;
        case SECONDARY_INFO_DISTANCE_MILES:
-         if (FLAG_LANGUAGE == LANGUAGE_SYSTEM) snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "MI  %d.%d", health_distance / 1609, health_distance * 1000 / 1609 % 1000 / 100);
-         else snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "%s  %d.%d", _("MI"), health_distance / 1609, health_distance * 1000 / 1609 % 1000 / 100);
+         snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "MI  %d.%d", health_distance / 1609, health_distance * 1000 / 1609 % 1000 / 100);
          break;
        case SECONDARY_INFO_NOTHING:
-         strcpy(SECONDARY_INFO, "\0");
+         SECONDARY_INFO[0] = 0;
          break;
        case SECONDARY_INFO_SECOND_TIMEZONE:
          nowg = time(NULL) + ALT_TIMEZONE_OFFSET * 60;
@@ -358,8 +354,7 @@ void draw_secondary_info(FContext *fctx, uint_least8_t position, uint_least8_t s
      
          strcpy(SECONDARY_INFO, ALT_TIMEZONE_NAME); //prepending with timezone name
          SECONDARY_INFO[3]=' '; SECONDARY_INFO[4]=' ';
-
-         
+  
          strftime(&SECONDARY_INFO[5], sizeof(SECONDARY_INFO), format, tg); //adding timezone time
      
          break;
@@ -374,15 +369,13 @@ void draw_secondary_info(FContext *fctx, uint_least8_t position, uint_least8_t s
           }
          break;
      case SECONDARY_INFO_WEEK_NUMBER:
-          strftime(SECONDARY_INFO, sizeof(SECONDARY_INFO), "WK  %W", my_time);
-          if (FLAG_LANGUAGE != LANGUAGE_SYSTEM) strncpy(&SECONDARY_INFO[0], _("WK"), 2);
-         
+         strftime(SECONDARY_INFO, sizeof(SECONDARY_INFO), "WK  %W", my_time);
          break;
       case SECONDARY_INFO_DAY_MONTH:
          strftime(SECONDARY_INFO, sizeof(SECONDARY_INFO), "%d  %b", my_time);
          if (FLAG_LANGUAGE != LANGUAGE_SYSTEM) translate_short_month_name(my_time->tm_mon, &SECONDARY_INFO[4]);
          utf_decode_to_upper(SECONDARY_INFO);
-         SECONDARY_INFO[7] = '\0'; // so it's no more than 7 chars eg. 06  JUL
+         SECONDARY_INFO[7] = 0; // so it's no more than 7 chars eg. 06  JUL
         
          break;
       case SECONDARY_INFO_WEATHER:
@@ -399,6 +392,8 @@ void draw_secondary_info(FContext *fctx, uint_least8_t position, uint_least8_t s
              break;
          }
           utf_decode_to_upper(SECONDARY_INFO); //correcting degree sign
+        } else {
+          strcpy(SECONDARY_INFO,"...");
         }
        break;
      case SECONDARY_INFO_FULL_DAY:
@@ -500,7 +495,7 @@ void draw_secondary_info(FContext *fctx, uint_least8_t position, uint_least8_t s
      }
   
      fctx_end_fill(fctx);
-     SECONDARY_INFO[0] = '\0'; //resetting info so it won't spoil other displays
+  
 }
 
 
@@ -623,12 +618,7 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time) {
       fctx_draw_text(&fctx, s_time, ffont, bounds.size.h * 38/100, center.x, center.y * 100/100, GTextAlignmentCenter, FTextAnchorTop);
       fctx_end_fill(&fctx);
       
-    } else { // if we're not in full screen - display secondary info as well
-     
-
-    }  
-  
-  
+    } 
   
 }
 

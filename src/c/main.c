@@ -12,25 +12,16 @@
 #include "watchface.h"
 #include "common.h"
 
-FPath *weather_icon, *bluetooth_icon;
-extern FFont *ffont;
-Window *s_window;
-Layer *s_main_layer;
-uint_least8_t  *buffer, *buffer_weather, *buffer_bluetooth;
-GBitmap *fctx_buffer;
-
-int_least32_t COORDINATES_LATITUDE, COORDINATES_LONGITUDE;
-int_least16_t temp_kelvin, temp_celcius, temp_fahrenheit;
 uint_least8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_WEATHER_INTERVAL, FLAG_LOCATION_SERVICE, FLAG_HOURS_MINUTES_SEPARATOR;
 uint_least8_t global_battery_percent, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5, FLAG_BLUETOOTH_ALERT, FLAG_BACKLIGHT_WHILE_CHARGING, FLAG_SHOW_ANALOG_SECONDS;
-
-
-
 #ifdef PBL_RECT
   uint_least8_t FLAG_SIDEBAR_LOCATION;
 #else
   uint_least8_t FLAG_SECONDARY_INFO_7, FLAG_SECONDARY_INFO_8, FLAG_SECONDARY_INFO_9, FLAG_SECONDARY_INFO_10;
 #endif
+int_least16_t temp_kelvin, temp_celcius, temp_fahrenheit;
+int_least32_t COORDINATES_LATITUDE, COORDINATES_LONGITUDE;
+
 
 #ifndef PBL_PLATFORM_APLITE
   uint_least8_t  FLAG_GRAPHICAL_STEP_GOAL, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_LANGUAGE;
@@ -44,17 +35,21 @@ uint_least8_t global_battery_percent, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO
   char ALT_TIMEZONE_NAME[4];
 #endif
 
-
 GenericWeatherProvider FLAG_WEATHER_PROVIDER;
 char LOCATION_NAME[22];
 
-bool global_bluetoot_connected;
-bool inside_init = true;
-
+FPath *weather_icon, *bluetooth_icon;
+extern FFont *ffont;
+Window *s_window;
+Layer *s_main_layer;
+uint_least8_t  *buffer, *buffer_weather, *buffer_bluetooth;
+GBitmap *fctx_buffer;
 
 EventHandle my_time, my_battery, my_connection, my_appmesages;
 
 char weather_api_key[3][33] = {"\0","\0","\0"};
+bool global_bluetoot_connected;
+bool inside_init = true;
 
 // even called when new health data ready
 #ifndef PBL_PLATFORM_APLITE
@@ -471,7 +466,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
 
 static void main_update_proc(Layer *layer, GContext *ctx) {
-  APP_LOG(APP_LOG_LEVEL_INFO, "Heap Free Size = %d", (int)heap_bytes_free());
+  //APP_LOG(APP_LOG_LEVEL_INFO, "Heap Free Size = %d", (int)heap_bytes_free());
   
   // getting current time
   time_t temp = time(NULL);
@@ -639,7 +634,7 @@ void handle_init() {
     health_init(health_metrics_update);
     health_metrics_update();
   
-    events_app_message_request_inbox_size(500);
+    events_app_message_request_inbox_size(450);
   #else
     events_app_message_request_inbox_size(300);
   #endif

@@ -1,12 +1,11 @@
 {
     "author": "yuri@galanter.net",
     "dependencies": {
-        "kiezelpay-core": "^2.0.12 ",
-        "pebble-clay": "^1.0.2",
-        "pebble-events": "^1.1.0",
-        "pebble-fctx": "^1.6.1",
+        "pebble-clay": "^1.0.4",
+        "pebble-events": "^1.2.0",
+        "pebble-fctx": "^1.6.2",
         "pebble-generic-weather": "^1.1.2",
-        "pebble-localize": "^0.1.1",
+        "pebble-localize": "^0.1.2",
         "pebble-simple-health": "^1.0.5",
         "pebble-utf8": "1.0.1"
     },

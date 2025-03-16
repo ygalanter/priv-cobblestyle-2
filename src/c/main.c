@@ -436,7 +436,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
 
 static void main_update_proc(Layer *layer, GContext *ctx) {
-  //APP_LOG(APP_LOG_LEVEL_INFO, "Heap Free Size = %d", (int)heap_bytes_free());
+  APP_LOG(APP_LOG_LEVEL_INFO, "Heap Free Size = %d", (int)heap_bytes_free());
   
   // getting current time
   time_t temp = time(NULL);

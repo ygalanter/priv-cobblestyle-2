@@ -432,22 +432,7 @@ module.exports = function(minified) {
            buynow.disable();
            buynow.hide(); 
     
-        
-        //detecting whether "BUY NOW" section should be shown
-        $.request('get', "https://kiezelpay.com/api/v1/status?appid=" + Clay.meta.userData.appid + "&accounttoken=" + Clay.meta.userData.accounttoken).then(function (str_data) {
-          
-           //TEST!
-           //alert(str_data);
-          
-            var data = JSON.parse(str_data);
-          
-            // if user is unlicensed - show BUY NOW
-            if (data.status != "licensed") { 
-                buynow.enable();
-                buynow.show(); 
-            }
-          
-        });
+
       
       
       

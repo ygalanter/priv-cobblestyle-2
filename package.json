@@ -1,7 +1,6 @@
 {
     "author": "yuri@galanter.net",
     "dependencies": {
-        "kiezelpay-core": "2.0.12",
         "pebble-clay": "1.0.2",
         "pebble-events": "1.1.0",
         "pebble-fctx": "1.5.0",

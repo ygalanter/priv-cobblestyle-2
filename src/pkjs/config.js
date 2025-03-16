@@ -1,27 +1,5 @@
 module.exports = [
-  
-  
-    //***************** END TRIAAL, BUY NOW *****************
-    {
-    "type": "section",
-    "items": [
-  
-        {
-            "type": "toggle",
-            "id": "BUY_NOW",  // To end trial earlier and initiate purchase righ away
-            "messageKey": "BUY_NOW",
-            "defaultValue": 0,
-            "label": "END TRIAL, BUY NOW",
-            "description": "Toggle to end your trial initiate purchase. After saving config follow instructions on your watch",
-            "capabilities": ["NOT_PLATFORM_APLITE"]
-        }
-      
-     ]
-    },
-  
-  
-  
-  
+    
    //***************** APPEARANCE RECT *****************
     {
     "type": "section",
@@ -1705,25 +1683,9 @@ module.exports = [
         { 
           "label": "Open Weather Map", 
           "value": "0" // #48 (- 48) = 0 
-        },
-        { 
-          "label": "Weather Underground", 
-          "value": "1" // #49 (- 48) = 1
-        },
-        { 
-          "label": "Forecast.IO",
-          "value": "2" // #50 (- 48) = 2
         }
       ]
     },
-    
-    {
-      "type": "input",                    
-      "messageKey": "FORECAST_API_KEY",
-      "id":  "FORECAST_API_KEY",
-      "defaultValue": "",
-      "label": "Forecast.io API KEY",
-   },
     
      {
       "type": "input",                    
@@ -1732,42 +1694,6 @@ module.exports = [
       "defaultValue": "",
       "label": "Open Weather Map API KEY",
     },
-    
-     {
-      "type": "input",                    
-      "messageKey": "WU_API_KEY",
-      "id":  "WU_API_KEY",
-      "defaultValue": "",
-      "label": "Weather Underground API KEY",
-       "description":"You can retrieve your keys stored at https://www.pmkey.xyz by filling the form below"
-    },
-    
-  
-      
-    {
-      "type": "input",
-      "id":  "MASTER_KEY_EMAIL", 
-      "defaultValue": "",
-      "label": "Master Key email",
-      "attributes": {"type": "email"}
-    },  
-    
-    {
-      "type": "input",
-      "id":  "MASTER_KEY_PIN", 
-      "defaultValue": "",
-      "label": "Master Key pin",
-      "attributes": {"type": "password"}
-    },  
-      
-      
-      {
-        "type": "button",
-        "id":  "MASTER_KEY_BUTTON",
-        "defaultValue": "GET KEYS"
-      },
-    
-    
     
    {
       "type": "select",

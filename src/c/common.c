@@ -192,7 +192,7 @@ void set_language(uint8_t language_id) {
     if (language_id != LANGUAGE_SYSTEM) {
       
        //setting localize cache for 8 strings
-       localize_set_cache_size(8);
+       // localize_set_cache_size(8);
       
        uint32_t resource_id = 0;
           
@@ -205,7 +205,7 @@ void set_language(uint8_t language_id) {
           
         }
       
-        localize_init(resource_id);
+        //localize_init(resource_id);
     } 
   
 }

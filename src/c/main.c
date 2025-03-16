@@ -5,7 +5,6 @@
 
 
 #ifndef PBL_PLATFORM_APLITE
-  #include "kiezelpay.h"
   #include "pebble-simple-health/pebble-simple-health.h"
 #endif
 
@@ -71,25 +70,6 @@ void health_metrics_update(){
 }
 #endif
 
-
-#ifndef PBL_PLATFORM_APLITE
-static bool kiezelpay_event_callback(kiezelpay_event e, void* extra_data) {
-  
-  switch (e) {
-    case KIEZELPAY_TRIAL_ENDED:
-    case KIEZELPAY_CODE_AVAILABLE:
-    case KIEZELPAY_PURCHASE_STARTED:
-      if (buffer != NULL) {free(buffer); buffer = NULL;}; //freeing memory for Kiezel purchase
-      break;
-   default:
-     break;
-  };
-  
-  //return true;   //prevent the kiezelpay lib from showing messages by signaling it that we handled the event ourselves
-  return false;    //let the kiezelpay lib handle the event
-
-}
-#endif
 
 // loading weather icon depending on coditions
 void set_weather_icon(GenericWeatherConditionCode condition_code, bool is_day) {
@@ -435,16 +415,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
              persist_write_string(MESSAGE_KEY_ALT_TIMEZONE_NAME, ALT_TIMEZONE_NAME);
              need_update = true;
           }
-    
-          
-          // *********  end trial, buy now
-          t = dict_find(iterator, MESSAGE_KEY_BUY_NOW);
-          if(t) { 
-             if (t->value->uint8 == 1) {
-                  if (buffer != NULL) {free(buffer); buffer = NULL;} //freeing memory for Kiezel purchase
-                  kiezelpay_start_purchase();
-              }
-          }
         
     
     #endif
@@ -622,11 +592,6 @@ void handle_init() {
   
   #ifndef PBL_PLATFORM_APLITE
   
-    // Listen for KiezelPay events
-    kiezelpay_set_event_handler(kiezelpay_event_callback);
-    // Initiate KiezelPay
-    kiezelpay_init();
-  
     // Set HRM sample period
     #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
     health_service_set_heart_rate_sample_period(1); // Every Second: STRESS TEST!!!
@@ -657,7 +622,6 @@ void handle_deinit(void) {
   events_app_message_unsubscribe(my_appmesages);
   generic_weather_deinit();
   #ifndef PBL_PLATFORM_APLITE
-    kiezelpay_deinit();
   
     #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
     health_service_set_heart_rate_sample_period(0);

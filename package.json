@@ -4,10 +4,11 @@
         "kiezelpay-core": "^2.0.12 ",
         "pebble-clay": "^1.0.2",
         "pebble-events": "^1.1.0",
-        "pebble-fctx": "^1.5.0",
+        "pebble-fctx": "^1.6.1",
         "pebble-generic-weather": "^1.1.2",
         "pebble-localize": "^0.1.1",
-        "pebble-simple-health": "^1.0.5"
+        "pebble-simple-health": "^1.0.5",
+        "pebble-utf8": "1.0.1"
     },
     "keywords": [],
     "name": "cobblestyle-2",
@@ -266,5 +267,5 @@
             "watchface": true
         }
     },
-    "version": "1.45.0"
+    "version": "1.5.0"
 }

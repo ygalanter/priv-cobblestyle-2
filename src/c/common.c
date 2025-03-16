@@ -84,7 +84,7 @@ static void fctx_draw_string_no_decoding(FContext* fctx, const char* text, FFont
 // Draws antialiased text with given font, size, position and allignment
 void fctx_draw_text(FContext *fctx, char * text, FFont* ffont, int16_t size, int16_t x, int16_t y, GTextAlignment text_align, FTextAnchor text_anchor) {
   fctx_set_offset(fctx, FPointI(x,y));
-  fctx_set_text_size(fctx, ffont, size);
+  fctx_set_text_em_height(fctx, ffont, size);
   fctx_draw_string_no_decoding(fctx, text, ffont, text_align, text_anchor);
 }
 
@@ -112,7 +112,7 @@ void utf_decode_to_upper(char *sPtr) {
          uint16_t decode_state = 0;   
          uint16_t  decoded_result = 0;
          do {  
-            decode_utf8_byte(*sPtr, &decode_state, &decoded_result);
+            utf8_decode_byte(*sPtr, &decode_state, &decoded_result);
             if (decode_state>0 && decode_state<6 ) {++sPtr;}
         } while (decode_state !=0 && decode_state !=6 );
          //******************************************   

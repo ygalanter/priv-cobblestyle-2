@@ -4,6 +4,7 @@
 #include <pebble-fctx/fctx.h>
 #include <pebble-fctx/ffont.h>
 #include <pebble-fctx/fpath.h>
+#include <pebble-utf8/pebble-utf8.h>
 
 #ifdef PBL_PLATFORM_APLITE
   #define FONT_BUFFER_SIZE 2452

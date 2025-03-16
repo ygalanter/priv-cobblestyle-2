@@ -45,7 +45,7 @@ uint_least32_t string_width_radial(
       fixed_t arc;
       FGlyph* glyph;
       const char* p;
-   fctx_set_text_size(fctx, font, font_size);
+    fctx_set_text_em_height(fctx, font, font_size);
     s = radius * 6588397 / TRIG_MAX_ANGLE;
     t = s * fctx->transform_scale_from.x / fctx->transform_scale_to.x;
     arc = 0;
@@ -88,7 +88,7 @@ void draw_string_radial(
   //correcting angle for half string width
     angle -= string_width_radial(fctx,text,font,font_size, center, radius, clockwise)/2;
   
-    fctx_set_text_size(fctx, font, font_size);
+    fctx_set_text_em_height(fctx, font, font_size);
     fctx_set_offset(fctx, center);
     fctx_set_rotation(fctx, 0);
 

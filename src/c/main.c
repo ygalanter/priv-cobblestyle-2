@@ -5,7 +5,7 @@
 
 
 #ifndef PBL_PLATFORM_APLITE
-  #include "pebble-simple-health/pebble-simple-health.h"
+  #include "pebble-simple-health.h"
 #endif
 
 #include "watchface.h"

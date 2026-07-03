@@ -1,5 +1,5 @@
 {
-    "author": "yuri@galanter.net",
+    "author": "Comfortably Numb",
     "dependencies": {
         "@rebble/clay": "^1.0.10",
         "pebble-events": "^1.2.1",
@@ -265,5 +265,5 @@
             "watchface": true
         }
     },
-    "version": "1.48.0"
+    "version": "1.50.0"
 }

@@ -57,7 +57,7 @@ typedef struct {
 // even called when new health data ready
 #ifndef PBL_PLATFORM_APLITE
 void health_metrics_update(){
-  
+
   health_steps =  health_get_metric_sum(HealthMetricStepCount);
   health_step_goal = CUSTOM_STEP_GOAL == 0? health_get_metric_goal(HealthMetricStepCount) : CUSTOM_STEP_GOAL;
   health_distance = health_get_metric_sum(HealthMetricWalkedDistanceMeters);
@@ -490,7 +490,7 @@ static void main_update_proc(Layer *layer, GContext *ctx) {
   // getting current time
   time_t temp = time(NULL);
   struct tm *global_date_time = localtime(&temp);
-  
+
   draw_data(layer, ctx, global_date_time); // drawing time, battery, health
   draw_graphics(layer, ctx, global_date_time); // drawing graphics
   
@@ -653,7 +653,7 @@ void handle_init() {
   //initializng app messages
   my_appmesages = events_app_message_subscribe_handlers((EventAppMessageHandlers){.received = inbox_received_callback}, NULL);
   events_app_message_open();
-  
+
 }
 
 void handle_deinit(void) {

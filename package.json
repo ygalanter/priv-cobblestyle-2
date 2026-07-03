@@ -1,11 +1,10 @@
 {
     "author": "yuri@galanter.net",
     "dependencies": {
-        "pebble-clay": "1.0.2",
-        "pebble-events": "1.1.0",
-        "pebble-fctx": "1.5.0",
-        "pebble-generic-weather": "1.1.2",
-        "pebble-localize": "0.1.1"
+        "@rebble/clay": "^1.0.10",
+        "pebble-events": "^1.2.1",
+        "pebble-fctx": "^1.6.5",
+        "pebble-simple-health": "^1.0.7"
     },
     "keywords": [],
     "name": "cobblestyle-2",
@@ -19,13 +18,15 @@
         "enableMultiJS": true,
         "messageKeys": [
             "JSREADY",
-            "OWM_API_KEY",
-            "WU_API_KEY",
-            "FORECAST_API_KEY",
             "TIME_DISPLAY",
             "TEMPERATURE_FORMAT",
-            "WEATHER_PROVIDER",
             "WEATHER_INTERVAL",
+            "WEATHER_TEMP",
+            "WEATHER_CODE",
+            "WEATHER_CITY",
+            "WEATHER_IS_DAY",
+            "WEATHER_STATUS",
+            "WEATHER_REQUEST",
             "SIDEBAR_LOCATION",
             "LOCATION_SERVICE",
             "LOCATION_LATITUDE",
@@ -62,18 +63,6 @@
         "resources": {
             "media": [
                 {
-                    "file": "data/BadApiKey.fpath",
-                    "name": "WEATHER_ICON_BAD_API_KEY",
-                    "targetPlatforms": null,
-                    "type": "raw"
-                },
-                {
-                    "file": "data/Disconnected.fpath",
-                    "name": "WEATHER_ICON_DISCONNECTED",
-                    "targetPlatforms": null,
-                    "type": "raw"
-                },
-                {
                     "file": "data/Failed.fpath",
                     "name": "WEATHER_ICON_FAILED",
                     "targetPlatforms": null,
@@ -88,12 +77,6 @@
                 {
                     "file": "data/NotYetFetched.fpath",
                     "name": "WEATHER_ICON_NOT_YET_FETCHED",
-                    "targetPlatforms": null,
-                    "type": "raw"
-                },
-                {
-                    "file": "data/PendingWaiting.fpath",
-                    "name": "WEATHER_ICON_PENDING_WAITING",
                     "targetPlatforms": null,
                     "type": "raw"
                 },
@@ -206,7 +189,10 @@
                     "targetPlatforms": [
                         "basalt",
                         "chalk",
-                        "diorite"
+                        "diorite",
+                        "emery",
+                        "flint",
+                        "gabbro"
                     ],
                     "type": "raw"
                 },
@@ -216,7 +202,10 @@
                     "targetPlatforms": [
                         "basalt",
                         "chalk",
-                        "diorite"
+                        "diorite",
+                        "emery",
+                        "flint",
+                        "gabbro"
                     ],
                     "type": "raw"
                 },
@@ -226,7 +215,10 @@
                     "targetPlatforms": [
                         "basalt",
                         "chalk",
-                        "diorite"
+                        "diorite",
+                        "emery",
+                        "flint",
+                        "gabbro"
                     ],
                     "type": "raw"
                 },
@@ -236,7 +228,10 @@
                     "targetPlatforms": [
                         "basalt",
                         "chalk",
-                        "diorite"
+                        "diorite",
+                        "emery",
+                        "flint",
+                        "gabbro"
                     ],
                     "type": "raw"
                 },
@@ -246,7 +241,10 @@
                     "targetPlatforms": [
                         "basalt",
                         "chalk",
-                        "diorite"
+                        "diorite",
+                        "emery",
+                        "flint",
+                        "gabbro"
                     ],
                     "type": "raw"
                 }
@@ -257,7 +255,10 @@
             "aplite",
             "basalt",
             "chalk",
-            "diorite"
+            "diorite",
+            "emery",
+            "flint",
+            "gabbro"
         ],
         "uuid": "63dee1fa-91f0-4069-bbeb-091d29f88adb",
         "watchapp": {

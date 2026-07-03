@@ -84,7 +84,7 @@ static void fctx_draw_string_no_decoding(FContext* fctx, const char* text, FFont
 // Draws antialiased text with given font, size, position and allignment
 void fctx_draw_text(FContext *fctx, char * text, FFont* ffont, int16_t size, int16_t x, int16_t y, GTextAlignment text_align, FTextAnchor text_anchor) {
   fctx_set_offset(fctx, FPointI(x,y));
-  fctx_set_text_size(fctx, ffont, size);
+  fctx_set_text_em_height(fctx, ffont, size);
   fctx_draw_string_no_decoding(fctx, text, ffont, text_align, text_anchor);
 }
 
@@ -102,8 +102,27 @@ FPath* fpath_create_from_resource_with_buffer(uint32_t resource_id, uint8_t *buf
 }
 
 
+// Incremental UTF-8 byte decoder (previously provided by pebble-fctx <= 1.5.0,
+// dropped from its public API in 1.6.x). Feeds one byte at a time:
+//   *state -> number of continuation bytes still expected (0 = codepoint ready
+//             in *cp, 1..3 = need more bytes, 6 = decode error)
+uint16_t decode_utf8_byte(uint8_t byte, uint16_t *state, uint16_t *cp) {
+  if (*state == 0) { // start of a new sequence
+    if (byte < 0x80)      { *cp = byte;        *state = 0; }
+    else if (byte < 0xC0) { *state = 6; }               // stray continuation byte
+    else if (byte < 0xE0) { *cp = byte & 0x1F; *state = 1; }
+    else if (byte < 0xF0) { *cp = byte & 0x0F; *state = 2; }
+    else if (byte < 0xF8) { *cp = byte & 0x07; *state = 3; }
+    else                  { *state = 6; }
+  } else { // expecting a continuation byte
+    if ((byte & 0xC0) == 0x80) { *cp = (*cp << 6) | (byte & 0x3F); (*state)--; }
+    else                       { *state = 6; }
+  }
+  return *state;
+}
+
 // This function decodees 2-bytes unicode chars and converts them to uppercase
-void utf_decode_to_upper(char *sPtr) {  
+void utf_decode_to_upper(char *sPtr) {
     char *Result = sPtr;
   
     while(*sPtr != 0) {

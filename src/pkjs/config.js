@@ -1672,29 +1672,7 @@ module.exports = [
       "id": "weatherHeading",
       "defaultValue": "Weather"
     },
-    
-     {
-      "type": "select",
-      "id": "WEATHER_PROVIDER",        //Weather provider
-      "messageKey": "WEATHER_PROVIDER",
-      "defaultValue": "0",
-      "label": "Weather Provider",
-      "options": [
-        { 
-          "label": "Open Weather Map", 
-          "value": "0" // #48 (- 48) = 0 
-        }
-      ]
-    },
-    
-     {
-      "type": "input",                    
-      "messageKey": "OWM_API_KEY",
-      "id":  "OWM_API_KEY",
-      "defaultValue": "",
-      "label": "Open Weather Map API KEY",
-    },
-    
+
    {
       "type": "select",
       "id": "WEATHER_INTERVAL",        //Weather update interval

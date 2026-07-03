@@ -45,7 +45,7 @@ uint_least32_t string_width_radial(
       fixed_t arc;
       FGlyph* glyph;
       const char* p;
-   fctx_set_text_size(fctx, font, font_size);
+   fctx_set_text_em_height(fctx, font, font_size);
     s = radius * 6588397 / TRIG_MAX_ANGLE;
     t = s * fctx->transform_scale_from.x / fctx->transform_scale_to.x;
     arc = 0;
@@ -88,7 +88,7 @@ void draw_string_radial(
   //correcting angle for half string width
     angle -= string_width_radial(fctx,text,font,font_size, center, radius, clockwise)/2;
   
-    fctx_set_text_size(fctx, font, font_size);
+    fctx_set_text_em_height(fctx, font, font_size);
     fctx_set_offset(fctx, center);
     fctx_set_rotation(fctx, 0);
 
@@ -270,7 +270,6 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
   }  
   
   // initializing FCTX library
-  //fctx_init_context(&fctx, ctx);
   fctx_init_context_my(&fctx, ctx);
   fctx_set_color_bias(&fctx, 0);
  
@@ -504,7 +503,7 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time) {
    GColor color_icon = GColorFromHEX(ICON_COLOR);
    
     FContext fctx;
-    char format[] = "%A:%B";
+    char format[16] = "%A:%B";
   
     //text-output buffer variables
     char s_time[] = "PAR 88:44 PM";
@@ -514,7 +513,6 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time) {
     GPoint center = grect_center_point(&bounds);
     
     // initializing FCTX library
-    //fctx_init_context(&fctx, ctx);
     fctx_init_context_my(&fctx, ctx);
     fctx_set_color_bias(&fctx, 0);
     

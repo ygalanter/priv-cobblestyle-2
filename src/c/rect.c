@@ -247,7 +247,6 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
   
   
    // initializing FCTX library
-  //fctx_init_context(&fctx, ctx);
   fctx_init_context_my(&fctx, ctx);
   fctx_set_color_bias(&fctx, 0);
  
@@ -284,7 +283,7 @@ void draw_graphics(Layer *layer, GContext *ctx, struct tm *global_date_time) {
 void draw_secondary_info(FContext *fctx, uint_least8_t font_size, uint_least8_t x, uint_least8_t y, uint_least8_t secondary_info_type, struct tm *my_time, GColor color){
   
    #ifndef PBL_PLATFORM_APLITE
-   char format[] = "%A:%B";
+   char format[16] = "%A:%B";
    time_t nowg;
    struct tm *tg;
   
@@ -416,7 +415,7 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
     #endif
    
   FContext fctx;
-  char format[] = "%A:%B";
+  char format[16] = "%A:%B";
 
   //text-output buffer variables
   char s_time[] = "PAR 88:44 PM";
@@ -432,7 +431,6 @@ void draw_data(Layer *layer, GContext *ctx, struct tm *global_date_time){
   GRect u_bounds =  layer_get_unobstructed_bounds(layer);
   
   // initializing FCTX library
-  //fctx_init_context(&fctx, ctx);
   fctx_init_context_my(&fctx, ctx);
   fctx_set_color_bias(&fctx, 0);
  

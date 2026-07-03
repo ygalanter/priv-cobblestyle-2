@@ -5,17 +5,20 @@
 #include <pebble-fctx/ffont.h>
 #include <pebble-fctx/fpath.h>
 
+// Buffer must be >= the largest .ffont resource loaded on the platform.
+// (Sizes include the +2 byte cap_height field added for pebble-fctx 1.6.x.)
 #ifdef PBL_PLATFORM_APLITE
-  #define FONT_BUFFER_SIZE 2452
+  #define FONT_BUFFER_SIZE 2454
 #else
-  #include <pebble-localize/pebble-localize.h>
+  #include "pebble-localize.h"
 
-  #ifdef PBL_PLATFORM_DIORITE
-    #define FONT_BUFFER_SIZE 6636
+  // flint reuses the diorite B&W font variant (~flint == ~diorite copy)
+  #if defined(PBL_PLATFORM_DIORITE) || defined(PBL_PLATFORM_FLINT)
+    #define FONT_BUFFER_SIZE 6638
   #else
-    #define FONT_BUFFER_SIZE 10564
+    #define FONT_BUFFER_SIZE 10566
   #endif
-  
+
 #endif
 
 
@@ -25,6 +28,28 @@
 #define TEMPERATURE_KELVIN  0
 #define TEMPERATURE_CELCIUS 1
 #define TEMPERATURE_FAHRENHEIT 2
+
+// Weather condition codes (own set, replacing the pebble-generic-weather enum).
+// Order preserved so set_weather_icon() maps each to its RESOURCE_ID_WEATHER_ICON_*.
+#define WEATHER_COND_CLEAR_SKY        0
+#define WEATHER_COND_FEW_CLOUDS       1
+#define WEATHER_COND_SCATTERED_CLOUDS 2
+#define WEATHER_COND_BROKEN_CLOUDS    3
+#define WEATHER_COND_SHOWER_RAIN      4
+#define WEATHER_COND_RAIN             5
+#define WEATHER_COND_THUNDERSTORM     6
+#define WEATHER_COND_SNOW             7
+#define WEATHER_COND_MIST             8
+#define WEATHER_COND_UNKNOWN          9
+
+// Weather fetch status (own set, replacing GenericWeatherStatus).
+#define WEATHER_STATUS_AVAILABLE            0
+#define WEATHER_STATUS_NOT_YET_FETCHED      1
+#define WEATHER_STATUS_FAILED               2
+#define WEATHER_STATUS_LOCATION_UNAVAILABLE 3
+
+// Sentinel stored in temp_kelvin meaning "no valid weather data yet".
+#define WEATHER_NO_DATA (-1280)
 
 
 #define SECONDARY_INFO_LOCATION 0

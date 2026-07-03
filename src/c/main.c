@@ -1,11 +1,10 @@
 #include <pebble.h>
 #include "main.h"
 #include "pebble-events/pebble-events.h"
-#include "pebble-generic-weather/pebble-generic-weather.h"
 
 
 #ifndef PBL_PLATFORM_APLITE
-  #include "pebble-simple-health.h"
+  #include "pebble-simple-health/pebble-simple-health.h"
 #endif
 
 #include "watchface.h"
@@ -34,7 +33,6 @@ int_least32_t COORDINATES_LATITUDE, COORDINATES_LONGITUDE;
   char ALT_TIMEZONE_NAME[4];
 #endif
 
-GenericWeatherProvider FLAG_WEATHER_PROVIDER;
 char LOCATION_NAME[22];
 
 FPath *weather_icon, *bluetooth_icon;
@@ -46,9 +44,15 @@ GBitmap *fctx_buffer;
 
 EventHandle my_time, my_battery, my_connection, my_appmesages;
 
-char weather_api_key[3][33] = {"\0","\0","\0"};
-bool global_bluetoot_connected;
 bool inside_init = true;
+
+// Compact persisted weather snapshot (replaces the old GenericWeatherInfo blob).
+typedef struct {
+  int_least16_t temp_celcius;
+  uint_least8_t condition;
+  uint_least8_t is_day;
+  char name[22];
+} WeatherData;
 
 // even called when new health data ready
 #ifndef PBL_PLATFORM_APLITE
@@ -62,106 +66,108 @@ void health_metrics_update(){
   health_calories_active = health_get_metric_sum(HealthMetricActiveKCalories);
   
   #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
-     health_heart_rate =  health_service_peek_current_value(HealthMetricHeartRateBPM);
-     layer_mark_dirty(s_main_layer); // for EXTREME TEST - to update UI every time Heart rate changes
- #endif
-  
+     health_heart_rate = health_service_peek_current_value(HealthMetricHeartRateBPM);
+  #endif
 
 }
 #endif
 
 
-// loading weather icon depending on coditions
-void set_weather_icon(GenericWeatherConditionCode condition_code, bool is_day) {
+// loading weather icon depending on conditions
+void set_weather_icon(uint_least8_t condition_code, bool is_day) {
   uint_least32_t resource_id;
-  
+
     switch (condition_code){
-      case GenericWeatherConditionClearSky:
+      case WEATHER_COND_CLEAR_SKY:
         resource_id = is_day? RESOURCE_ID_WEATHER_ICON_CLEAR_SKY_DAY : RESOURCE_ID_WEATHER_ICON_CLEAR_SKY_NIGHT;
         break;
-      case GenericWeatherConditionFewClouds:
+      case WEATHER_COND_FEW_CLOUDS:
         resource_id = is_day? RESOURCE_ID_WEATHER_ICON_FEW_CLOUDS_DAY : RESOURCE_ID_WEATHER_ICON_FEW_CLOUDS_NIGHT;
         break;
-      case GenericWeatherConditionScatteredClouds:
+      case WEATHER_COND_SCATTERED_CLOUDS:
         resource_id = RESOURCE_ID_WEATHER_ICON_SCATTERED_CLOUDS;
         break;
-      case GenericWeatherConditionBrokenClouds:
+      case WEATHER_COND_BROKEN_CLOUDS:
         resource_id = RESOURCE_ID_WEATHER_ICON_BROKEN_CLOUDS;
         break;
-      case GenericWeatherConditionShowerRain:
+      case WEATHER_COND_SHOWER_RAIN:
         resource_id = RESOURCE_ID_WEATHER_ICON_SHOWER_RAIN;
         break;
-      case GenericWeatherConditionRain:
+      case WEATHER_COND_RAIN:
         resource_id = RESOURCE_ID_WEATHER_ICON_RAIN;
         break;
-      case GenericWeatherConditionThunderstorm:
+      case WEATHER_COND_THUNDERSTORM:
         resource_id = RESOURCE_ID_WEATHER_ICON_THUNDERSTORM;
         break;
-      case GenericWeatherConditionSnow:
+      case WEATHER_COND_SNOW:
         resource_id = RESOURCE_ID_WEATHER_ICON_SNOW;
         break;
-      case GenericWeatherConditionMist:
+      case WEATHER_COND_MIST:
         resource_id = RESOURCE_ID_WEATHER_ICON_MIST;
         break;
-      case GenericWeatherConditionUnknown:
+      case WEATHER_COND_UNKNOWN:
       default:
         resource_id = RESOURCE_ID_WEATHER_ICON_UNKNOWN;
         break;
     }
-  
+
     weather_icon = fpath_create_from_resource_with_buffer(resource_id, buffer_weather);
-  
+
 }
 
-//storing weather info into local variables
-void copy_weather(GenericWeatherInfo *info) {
-   temp_kelvin = info->temp_k; temp_celcius = info->temp_c; temp_fahrenheit = info->temp_f;
-  
-   //YG 2916-07-31: To avoid overflow of LOCATION variable and crash
-   if (strlen(info->name) < 20) {
-     strcpy(LOCATION_NAME, info->name);  
-   } else {
-     strncpy(LOCATION_NAME, info->name, 20);
-     LOCATION_NAME[20] = 0;
-   }
-  
-   set_weather_icon(info->condition, info->day);
-}
-
-// weather retreival handler
-static void weather_callback(GenericWeatherInfo *info, GenericWeatherStatus status) {
-  temp_kelvin = -1280; 
-  
-  if (status == GenericWeatherStatusAvailable) {
-      copy_weather(info);  // storing weather into local variables
-      persist_write_data(MESSAGE_KEY_WEATHER_STORAGE, info, sizeof(GenericWeatherInfo)); // and persiting it
-  } else {
-     uint_least32_t resource_id;
-      switch(status) {
-        case GenericWeatherStatusNotYetFetched:
-          resource_id=RESOURCE_ID_WEATHER_ICON_NOT_YET_FETCHED;
-          break;
-        case GenericWeatherStatusBluetoothDisconnected:
-          resource_id=RESOURCE_ID_BLUETOOTH_ICON_DISCONNECTED;
-          break;
-        case GenericWeatherStatusPending:
-          resource_id=RESOURCE_ID_WEATHER_ICON_PENDING_WAITING;
-          break;
-        case GenericWeatherStatusFailed:
-          resource_id=RESOURCE_ID_WEATHER_ICON_FAILED;
-          break;
-        case GenericWeatherStatusBadKey:
-          resource_id=RESOURCE_ID_WEATHER_ICON_BAD_API_KEY;
-          break;
-        default: //case GenericWeatherStatusLocationUnavailable:
-          resource_id=RESOURCE_ID_WEATHER_ICON_LOCATION_UNAVAILABLE;
-          break;
-      }
-      
-       weather_icon = fpath_create_from_resource_with_buffer(resource_id, buffer_weather);
+// maps an Open-Meteo WMO weather code to our WEATHER_COND_* condition
+static uint_least8_t wmo_to_condition(int wmo) {
+  switch (wmo) {
+    case 0:  return WEATHER_COND_CLEAR_SKY;
+    case 1:
+    case 2:  return WEATHER_COND_FEW_CLOUDS;
+    case 3:  return WEATHER_COND_BROKEN_CLOUDS;
+    case 45:
+    case 48: return WEATHER_COND_MIST;
+    case 51: case 53: case 55:
+    case 56: case 57: return WEATHER_COND_SHOWER_RAIN;
+    case 61: case 63: case 65:
+    case 66: case 67:
+    case 80: case 81: case 82: return WEATHER_COND_RAIN;
+    case 71: case 73: case 75: case 77:
+    case 85: case 86: return WEATHER_COND_SNOW;
+    case 95: case 96: case 99: return WEATHER_COND_THUNDERSTORM;
+    default: return WEATHER_COND_UNKNOWN;
   }
-     layer_mark_dirty(s_main_layer);
-    
+}
+
+// stores decoded weather into local variables (temp in Celsius; F & K derived)
+void copy_weather(int_least16_t temp_c, uint_least8_t condition, bool is_day, const char *name) {
+  temp_celcius = temp_c;
+  temp_fahrenheit = temp_c * 9 / 5 + 32;
+  temp_kelvin = temp_c + 273;
+
+  //YG 2916-07-31: To avoid overflow of LOCATION variable and crash
+  if (strlen(name) < 20) {
+    strcpy(LOCATION_NAME, name);
+  } else {
+    strncpy(LOCATION_NAME, name, 20);
+    LOCATION_NAME[20] = 0;
+  }
+
+  set_weather_icon(condition, is_day);
+}
+
+// displays a status icon for a non-available weather result
+static void set_weather_status_icon(uint_least8_t status) {
+  uint_least32_t resource_id;
+  switch (status) {
+    case WEATHER_STATUS_NOT_YET_FETCHED:
+      resource_id = RESOURCE_ID_WEATHER_ICON_NOT_YET_FETCHED;
+      break;
+    case WEATHER_STATUS_FAILED:
+      resource_id = RESOURCE_ID_WEATHER_ICON_FAILED;
+      break;
+    default: // WEATHER_STATUS_LOCATION_UNAVAILABLE
+      resource_id = RESOURCE_ID_WEATHER_ICON_LOCATION_UNAVAILABLE;
+      break;
+  }
+  weather_icon = fpath_create_from_resource_with_buffer(resource_id, buffer_weather);
 }
 
 
@@ -179,23 +185,16 @@ void battery_handler(BatteryChargeState state) {
   
 }
 
+// asks the phone (pkjs) to fetch fresh weather, passing the location settings
+// (mode + manual coordinates, degrees x100000) so JS can query Open-Meteo/nominatim
 void get_weather() {
-  
-  if (weather_api_key[FLAG_WEATHER_PROVIDER][0] != '\0') {
-    generic_weather_set_provider(FLAG_WEATHER_PROVIDER);
-    generic_weather_set_api_key(weather_api_key[FLAG_WEATHER_PROVIDER]);
-    
-    GenericWeatherCoordinates coords;
-    if (FLAG_LOCATION_SERVICE == LOCATION_SERVICE_MANUAL) {
-      coords = (GenericWeatherCoordinates){.latitude = COORDINATES_LATITUDE, .longitude = COORDINATES_LONGITUDE};
-    } else {
-      coords = GENERIC_WEATHER_GPS_LOCATION;
-    }
-    
-    generic_weather_set_location(coords);
-    generic_weather_fetch(weather_callback);
-  }
-  
+  DictionaryIterator *iter;
+  if (app_message_outbox_begin(&iter) != APP_MSG_OK) return;
+  dict_write_uint8(iter, MESSAGE_KEY_WEATHER_REQUEST, 1);
+  dict_write_uint8(iter, MESSAGE_KEY_LOCATION_SERVICE, FLAG_LOCATION_SERVICE);
+  dict_write_int32(iter, MESSAGE_KEY_LOCATION_LATITUDE, COORDINATES_LATITUDE);
+  dict_write_int32(iter, MESSAGE_KEY_LOCATION_LONGITUDE, COORDINATES_LONGITUDE);
+  app_message_outbox_send();
 }
 
 
@@ -255,9 +254,51 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
       // and marking layer dirty to display it
       layer_mark_dirty(s_main_layer);
   }
-  
-  
+
+
 }
+
+
+// true when any active element needs a per-second redraw (second hand or a
+// "Seconds" widget). Used to avoid the battery cost of a per-second tick.
+static bool seconds_needed() {
+  if (FLAG_SHOW_ANALOG_SECONDS == 1) return true;
+  #ifndef PBL_PLATFORM_APLITE
+    if (FLAG_SECONDARY_INFO_1 == SECONDARY_INFO_SECONDS || FLAG_SECONDARY_INFO_2 == SECONDARY_INFO_SECONDS
+     || FLAG_SECONDARY_INFO_3 == SECONDARY_INFO_SECONDS || FLAG_SECONDARY_INFO_4 == SECONDARY_INFO_SECONDS
+     || FLAG_SECONDARY_INFO_5 == SECONDARY_INFO_SECONDS || FLAG_SECONDARY_INFO_6 == SECONDARY_INFO_SECONDS
+     #ifdef PBL_ROUND
+      || FLAG_SECONDARY_INFO_9 == SECONDARY_INFO_SECONDS || FLAG_SECONDARY_INFO_10 == SECONDARY_INFO_SECONDS
+     #endif
+    ) return true;
+  #endif
+  return false;
+}
+
+// subscribes to SECOND_UNIT only while seconds are actually displayed, otherwise
+// MINUTE_UNIT -- saving battery. Safe to call repeatedly (e.g. after settings change).
+static TimeUnits s_tick_units = MINUTE_UNIT;
+static void update_tick_subscription() {
+  TimeUnits needed = seconds_needed() ? SECOND_UNIT : MINUTE_UNIT;
+  if (my_time && needed == s_tick_units) return;
+  if (my_time) events_tick_timer_service_unsubscribe(my_time);
+  s_tick_units = needed;
+  my_time = events_tick_timer_service_subscribe(s_tick_units, tick_handler);
+}
+
+
+#if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+// Enables 1Hz heart-rate sampling only while a "Heart Rate" widget is actually
+// shown; otherwise turns the HRM sensor off (period 0) to save battery.
+static bool heart_rate_needed() {
+  return FLAG_SECONDARY_INFO_1 == SECONDARY_INFO_HEART_RATE || FLAG_SECONDARY_INFO_2 == SECONDARY_INFO_HEART_RATE
+      || FLAG_SECONDARY_INFO_3 == SECONDARY_INFO_HEART_RATE || FLAG_SECONDARY_INFO_4 == SECONDARY_INFO_HEART_RATE
+      || FLAG_SECONDARY_INFO_5 == SECONDARY_INFO_HEART_RATE || FLAG_SECONDARY_INFO_6 == SECONDARY_INFO_HEART_RATE;
+}
+static void update_heart_rate_sampling() {
+  health_service_set_heart_rate_sample_period(heart_rate_needed() ? 1 : 0);
+}
+#endif
 
 
 bool need_update;
@@ -281,42 +322,48 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   
   
   Tuple *t;
-    
-  t = dict_find(iterator, MESSAGE_KEY_JSREADY); 
+
+  // ---- weather response from the phone (self-contained Open-Meteo / nominatim) ----
+  t = dict_find(iterator, MESSAGE_KEY_WEATHER_STATUS);
+  if (t) {
+    uint_least8_t status = t->value->uint8;
+    if (status == WEATHER_STATUS_AVAILABLE) {
+      Tuple *t_temp = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMP);
+      Tuple *t_code = dict_find(iterator, MESSAGE_KEY_WEATHER_CODE);
+      Tuple *t_day  = dict_find(iterator, MESSAGE_KEY_WEATHER_IS_DAY);
+      Tuple *t_city = dict_find(iterator, MESSAGE_KEY_WEATHER_CITY);
+
+      int_least16_t temp_c = t_temp ? t_temp->value->int32 : 0;
+      uint_least8_t cond = wmo_to_condition(t_code ? t_code->value->int32 : -1);
+      bool is_day = t_day ? (t_day->value->int32 != 0) : true;
+      const char *city = t_city ? t_city->value->cstring : "";
+
+      copy_weather(temp_c, cond, is_day, city); // store + build icon
+
+      WeatherData wd = {.temp_celcius = temp_c, .condition = cond, .is_day = is_day ? 1 : 0};
+      strncpy(wd.name, LOCATION_NAME, sizeof(wd.name)); wd.name[sizeof(wd.name) - 1] = 0;
+      persist_write_data(MESSAGE_KEY_WEATHER_STORAGE, &wd, sizeof(wd)); // persist it
+    } else {
+      temp_kelvin = WEATHER_NO_DATA;
+      set_weather_status_icon(status);
+    }
+    layer_mark_dirty(s_main_layer);
+    return;
+  }
+
+  t = dict_find(iterator, MESSAGE_KEY_JSREADY);
   if(t) { // if JS ready - call weather
     get_weather();
-    
+
   } else { // otherwise check the rest of the keys
-    
+
       need_update = false;
-    
-      t = dict_find(iterator, MESSAGE_KEY_OWM_API_KEY); 
-      if(t) { // Open Weather Map API KEY
-         strcpy(weather_api_key[0],  t->value->cstring);  
-         persist_write_string(MESSAGE_KEY_OWM_API_KEY, weather_api_key[0]);
-         need_update = true;
-      }
-    
-      t = dict_find(iterator, MESSAGE_KEY_WU_API_KEY); 
-      if(t) { // Weather Underground API KEY
-         strcpy(weather_api_key[1], t->value->cstring);  
-         persist_write_string(MESSAGE_KEY_WU_API_KEY, weather_api_key[1]);
-         need_update = true;
-      }
-    
-      t = dict_find(iterator, MESSAGE_KEY_FORECAST_API_KEY); 
-      if(t) { // Forecast.IO  API KEY
-         strcpy(weather_api_key[2], t->value->cstring);  
-         persist_write_string(MESSAGE_KEY_FORECAST_API_KEY, weather_api_key[2]);
-         need_update = true;
-      }
-    
-      FLAG_LOCATION_SERVICE = get_int_from_inbox(iterator, MESSAGE_KEY_LOCATION_SERVICE, FLAG_LOCATION_SERVICE); 
-      COORDINATES_LATITUDE = get_int_from_inbox(iterator, MESSAGE_KEY_LOCATION_LATITUDE, COORDINATES_LATITUDE); 
-      COORDINATES_LONGITUDE = get_int_from_inbox(iterator, MESSAGE_KEY_LOCATION_LONGITUDE, COORDINATES_LONGITUDE); 
-      TIME_DISPLAY = get_int_from_inbox(iterator, MESSAGE_KEY_TIME_DISPLAY, TIME_DISPLAY); 
-    
-      FLAG_WEATHER_PROVIDER = get_int_from_inbox(iterator, MESSAGE_KEY_WEATHER_PROVIDER, FLAG_WEATHER_PROVIDER);
+
+      FLAG_LOCATION_SERVICE = get_int_from_inbox(iterator, MESSAGE_KEY_LOCATION_SERVICE, FLAG_LOCATION_SERVICE);
+      COORDINATES_LATITUDE = get_int_from_inbox(iterator, MESSAGE_KEY_LOCATION_LATITUDE, COORDINATES_LATITUDE);
+      COORDINATES_LONGITUDE = get_int_from_inbox(iterator, MESSAGE_KEY_LOCATION_LONGITUDE, COORDINATES_LONGITUDE);
+      TIME_DISPLAY = get_int_from_inbox(iterator, MESSAGE_KEY_TIME_DISPLAY, TIME_DISPLAY);
+
       FLAG_TEMPERATURE_FORMAT = get_int_from_inbox(iterator, MESSAGE_KEY_TEMPERATURE_FORMAT, FLAG_TEMPERATURE_FORMAT);
       FLAG_WEATHER_INTERVAL = get_int_from_inbox(iterator, MESSAGE_KEY_WEATHER_INTERVAL, FLAG_WEATHER_INTERVAL); 
       #ifdef PBL_RECT
@@ -425,7 +472,11 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         set_language(FLAG_LANGUAGE);
         health_metrics_update();
         window_set_background_color(s_window, GColorFromHEX(BACK_COLOR));
+        #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+        update_heart_rate_sampling(); // HR widget may have been toggled
+        #endif
       #endif
+      update_tick_subscription(); // seconds widget/hand may have been toggled
       layer_mark_dirty(s_main_layer);
       get_weather();
     }
@@ -436,8 +487,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
 
 static void main_update_proc(Layer *layer, GContext *ctx) {
-  //APP_LOG(APP_LOG_LEVEL_INFO, "Heap Free Size = %d", (int)heap_bytes_free());
-  
   // getting current time
   time_t temp = time(NULL);
   struct tm *global_date_time = localtime(&temp);
@@ -455,13 +504,13 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
 
-  //TODO: Include more platforms
-  #ifdef PBL_PLATFORM_APLITE
+  // FCTX rasterization buffer, matched to each platform's framebuffer:
+  //   1-bit for B&W (aplite/diorite/flint), circular 8-bit for round (chalk/gabbro),
+  //   plain 8-bit for color rect (basalt/emery).
+  #if defined(PBL_BW)
     fctx_buffer = gbitmap_create_blank(bounds.size, GBitmapFormat1Bit);
-  #elif PBL_PLATFORM_DIORITE
-    fctx_buffer =  gbitmap_create_blank(bounds.size, GBitmapFormat1Bit);
-  #elif PBL_PLATFORM_CHALK
-    fctx_buffer =  gbitmap_create_blank(bounds.size, GBitmapFormat8BitCircular);
+  #elif defined(PBL_ROUND)
+    fctx_buffer = gbitmap_create_blank(bounds.size, GBitmapFormat8BitCircular);
   #else
     fctx_buffer = gbitmap_create_blank(bounds.size, GBitmapFormat8Bit);
   #endif
@@ -504,7 +553,6 @@ void handle_init() {
   
   TIME_DISPLAY = persist_exists(MESSAGE_KEY_TIME_DISPLAY) ? persist_read_int(MESSAGE_KEY_TIME_DISPLAY) : DIGITAL_TIME;
   FLAG_TEMPERATURE_FORMAT = persist_exists(MESSAGE_KEY_TEMPERATURE_FORMAT) ? persist_read_int(MESSAGE_KEY_TEMPERATURE_FORMAT) : TEMPERATURE_FAHRENHEIT;
-  FLAG_WEATHER_PROVIDER = persist_exists(MESSAGE_KEY_WEATHER_PROVIDER) ? persist_read_int(MESSAGE_KEY_WEATHER_PROVIDER) : GenericWeatherProviderOpenWeatherMap;
   FLAG_WEATHER_INTERVAL = persist_exists(MESSAGE_KEY_WEATHER_INTERVAL) ? persist_read_int(MESSAGE_KEY_WEATHER_INTERVAL) : 60;
   #ifdef PBL_RECT
   FLAG_SIDEBAR_LOCATION = persist_exists(MESSAGE_KEY_SIDEBAR_LOCATION) ? persist_read_int(MESSAGE_KEY_SIDEBAR_LOCATION) : SIDEBAR_LOCATION_RIGHT;
@@ -547,11 +595,6 @@ void handle_init() {
   #endif
   
   
-  if (persist_exists(MESSAGE_KEY_OWM_API_KEY)) persist_read_string(MESSAGE_KEY_OWM_API_KEY, weather_api_key[0], persist_get_size(MESSAGE_KEY_OWM_API_KEY));
-  if (persist_exists(MESSAGE_KEY_WU_API_KEY)) persist_read_string(MESSAGE_KEY_WU_API_KEY, weather_api_key[1], persist_get_size(MESSAGE_KEY_WU_API_KEY));
-  if (persist_exists(MESSAGE_KEY_FORECAST_API_KEY)) persist_read_string(MESSAGE_KEY_FORECAST_API_KEY, weather_api_key[2], persist_get_size(MESSAGE_KEY_FORECAST_API_KEY));
-
-  
   s_window = window_create();
   #ifndef PBL_PLATFORM_APLITE
     //setting language
@@ -569,14 +612,17 @@ void handle_init() {
     
   window_stack_push(s_window, true);
   
-  // restoring saved weather data
+  // restoring saved weather data (or showing the "not yet fetched" icon)
+  temp_kelvin = WEATHER_NO_DATA;
   if (persist_exists(MESSAGE_KEY_WEATHER_STORAGE)) {
-    GenericWeatherInfo info;
-    persist_read_data(MESSAGE_KEY_WEATHER_STORAGE, &info, sizeof(GenericWeatherInfo));
-    copy_weather(&info);
+    WeatherData wd;
+    persist_read_data(MESSAGE_KEY_WEATHER_STORAGE, &wd, sizeof(wd));
+    copy_weather(wd.temp_celcius, wd.condition, wd.is_day != 0, wd.name);
+  } else {
+    set_weather_status_icon(WEATHER_STATUS_NOT_YET_FETCHED);
   }
-  
-  my_time = events_tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+
+  update_tick_subscription();
   my_battery = events_battery_state_service_subscribe(battery_handler);
   my_connection = events_connection_service_subscribe((ConnectionHandlers){.pebble_app_connection_handler = connection_handler});
   
@@ -588,21 +634,21 @@ void handle_init() {
   inside_init = true;
   connection_handler(connection_service_peek_pebble_app_connection());
   inside_init = false;
-  generic_weather_init();
-  
+
   #ifndef PBL_PLATFORM_APLITE
-  
-    // Set HRM sample period
-    #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
-    health_service_set_heart_rate_sample_period(1); // Every Second: STRESS TEST!!!
-    #endif
+
     health_init(health_metrics_update);
+    // only run the HRM sensor when a Heart Rate widget is actually displayed
+    #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
+    update_heart_rate_sampling();
+    #endif
     health_metrics_update();
-  
+
     events_app_message_request_inbox_size(450);
   #else
     events_app_message_request_inbox_size(300);
   #endif
+  events_app_message_request_outbox_size(128); // for our weather-request messages
   
   //initializng app messages
   my_appmesages = events_app_message_subscribe_handlers((EventAppMessageHandlers){.received = inbox_received_callback}, NULL);
@@ -620,7 +666,6 @@ void handle_deinit(void) {
   events_battery_state_service_unsubscribe(my_battery);
   events_connection_service_unsubscribe(my_connection);
   events_app_message_unsubscribe(my_appmesages);
-  generic_weather_deinit();
   #ifndef PBL_PLATFORM_APLITE
   
     #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)

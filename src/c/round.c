@@ -135,6 +135,7 @@ FFont *ffont;
 extern uint_least8_t TIME_DISPLAY, FLAG_TEMPERATURE_FORMAT, FLAG_SIDEBAR_LOCATION, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_SECONDARY_INFO_7, FLAG_SECONDARY_INFO_8, FLAG_SECONDARY_INFO_9, FLAG_SECONDARY_INFO_10;
 extern uint_least8_t FLAG_SHOW_ANALOG_SECONDS, FLAG_SECONDARY_INFO_2, FLAG_SECONDARY_INFO_5, FLAG_GRAPHICAL_STEP_GOAL,global_battery_percent,FLAG_HOURS_MINUTES_SEPARATOR, FLAG_LANGUAGE;
 extern uint_least16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active;
+extern int_least32_t health_time_slept;
 extern int_least16_t temp_kelvin, temp_celcius, temp_fahrenheit;
 extern int_least16_t ALT_TIMEZONE_OFFSET;
 extern int_least32_t  PRIMARY_COLOR, SECONDARY_COLOR, BACK_COLOR, ICON_COLOR;
@@ -327,6 +328,9 @@ void draw_secondary_info(FContext *fctx, uint_least8_t position, uint_least8_t s
          break;
        case SECONDARY_INFO_CALORIES_REST:
          snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "CR  %d", health_calories_rest);
+         break;
+       case SECONDARY_INFO_TIME_SLEPT:
+         snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "SLP %d%c%d", (int)(health_time_slept / 3600), FLAG_HOURS_MINUTES_SEPARATOR, (int)(health_time_slept % 3600 / 60));
          break;
        case SECONDARY_INFO_CALORIES_ACTIVE:
          snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "CA  %d",health_calories_active);

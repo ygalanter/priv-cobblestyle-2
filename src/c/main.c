@@ -25,6 +25,7 @@ int_least32_t COORDINATES_LATITUDE, COORDINATES_LONGITUDE;
   uint_least8_t  FLAG_GRAPHICAL_STEP_GOAL, FLAG_SECONDARY_INFO_1, FLAG_SECONDARY_INFO_3, FLAG_SECONDARY_INFO_4, FLAG_SECONDARY_INFO_6, FLAG_LANGUAGE;
   int_least16_t ALT_TIMEZONE_OFFSET;
   uint_least16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active, CUSTOM_STEP_GOAL;
+  int_least32_t health_time_slept;
   #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
   uint_least32_t health_heart_rate;
   #endif
@@ -62,6 +63,7 @@ void health_metrics_update(){
   health_step_goal = CUSTOM_STEP_GOAL == 0? health_get_metric_goal(HealthMetricStepCount) : CUSTOM_STEP_GOAL;
   health_distance = health_get_metric_sum(HealthMetricWalkedDistanceMeters);
   health_time_active = health_get_metric_sum(HealthMetricActiveSeconds);
+  health_time_slept = health_get_metric_sum(HealthMetricSleepSeconds);
   health_calories_rest = health_get_metric_sum(HealthMetricRestingKCalories);
   health_calories_active = health_get_metric_sum(HealthMetricActiveKCalories);
   

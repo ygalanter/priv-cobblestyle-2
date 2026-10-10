@@ -75,6 +75,7 @@ char SECONDARY_INFO[22];
 #ifndef PBL_PLATFORM_APLITE
   extern uint_least16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active;
   extern int_least32_t health_time_slept;
+  extern bool quiet_time_active;
   #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
     extern uint_least32_t health_heart_rate;
   #endif
@@ -326,6 +327,9 @@ void draw_secondary_info(FContext *fctx, uint_least8_t font_size, uint_least8_t 
          break;
        case SECONDARY_INFO_TIME_SLEPT:
          snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "SLP %d%c%02d", (int)(health_time_slept / 3600), FLAG_HOURS_MINUTES_SEPARATOR, (int)(health_time_slept % 3600 / 60));
+         break;
+       case SECONDARY_INFO_QUIET_TIME:
+         strcpy(SECONDARY_INFO, quiet_time_active? GLYPH_BELL_CROSSED : GLYPH_BELL); // crossed bell = notifications silenced
          break;
        case SECONDARY_INFO_CALORIES_ACTIVE:
          snprintf(SECONDARY_INFO, sizeof(SECONDARY_INFO), "CA  %d",health_calories_active);

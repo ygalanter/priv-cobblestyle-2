@@ -24,6 +24,10 @@ Builds and renders on **all seven** Pebble/RePebble platforms:
 | flint    | Pebble 2 Duo         | 144×168 | B&W   | ✓ |
 | gabbro   | Pebble Round 2       | 260×260 | color, round | ✓ |
 
+On **aplite** the widget lines are fixed: a "CSTYLE 2" label and the location name.
+There are no widget, language or Quiet Time options, because Pebble Classic firmware
+lacks the Health and Quiet Time APIs and apps have far less memory there.
+
 ## Features
 
 - **Three time modes** — Analog, Digital, and Big Time (full‑screen hours/minutes),
@@ -32,18 +36,31 @@ Builds and renders on **all seven** Pebble/RePebble platforms:
   Powered by [Open‑Meteo](https://open-meteo.com/) (no API key required) with reverse
   geocoding via [OpenStreetMap Nominatim](https://nominatim.org/). Automatic (GPS) or
   manual coordinates; °F / °C / K; configurable refresh interval.
-- **Activity** (health‑capable platforms) — a graphical step‑goal ring/bar plus widgets
-  for step count, distance (m / km / mi), active time, resting/active calories, and
-  heart rate where the sensor exists.
-- **Info widgets** — mix and match: local time, second time zone, date, day of week,
-  week number, AM/PM, seconds, location, and custom text. Rectangular faces expose a
-  6‑slot sidebar (left/right); round faces arrange widgets radially around the dial.
+- **Activity** (health‑capable platforms) — a graphical step‑goal ring/bar (with an
+  optional custom step goal) plus widgets for step count, distance (m / km / mi),
+  active time, time slept, resting/active calories, and heart rate where the sensor
+  exists (rectangular faces).
+- **Info widgets** — mix and match: local time, second time zone, day and month, day
+  of week, week number, AM/PM, seconds, 12H/24H, weather, location, custom text, and a
+  **Quiet Time indicator** (see below).
+  - *Rectangular faces:* six widget lines above and below the time. The sidebar with
+    date, weather, battery and Bluetooth status can sit on the left or the right.
+  - *Round faces:* up to ten widgets. Six sit around the dial, with text that follows
+    the curve. Two sit inside the ring above and below the time, and two sit beside the
+    hours in Big Time mode.
+- **Quiet Time indicator** — a widget option that shows a bell while notifications are
+  on and a crossed‑out bell while Quiet Time is active. The icons are glyphs in the
+  watchface's own font, so they need no translation, and they're sized and colored like
+  any other widget text. Available in the widget slots that offer AM/PM and Seconds.
+- **Status at a glance** — battery level (icon and percentage) and a Bluetooth
+  connected/disconnected icon.
 - **Theming** — on color displays, pick a preset theme or set primary / secondary /
   background / icon colors individually; B&W displays render in high‑contrast
   monochrome.
 - **Localization** — UI day/month/label strings in Català, Magyar, Nederlands, Norsk,
   and Svenska, or follow the system language.
-- **Nice‑to‑haves** — Bluetooth‑disconnect vibration alerts and backlight‑while‑charging.
+- **Nice‑to‑haves** — Bluetooth‑disconnect vibration alerts (silent, weak, normal,
+  strong or double) and backlight‑while‑charging.
 
 ### Battery‑conscious by design
 
@@ -51,6 +68,8 @@ Builds and renders on **all seven** Pebble/RePebble platforms:
   while a seconds widget or the analog second hand is actually on screen.
 - The heart‑rate sensor is only sampled while a **Heart Rate** widget is displayed;
   otherwise it stays off.
+- There is no system event for Quiet Time changes, so its state is checked on the
+  existing tick and the face redraws only when it changes. This adds no extra wake‑ups.
 
 ## Configuration
 
@@ -77,6 +96,13 @@ pebble screenshot --emulator emery
 pebble logs --emulator emery
 ```
 
+Settings can be pushed without the phone‑side config page by sending the numeric
+message keys (listed in `build/js/message_keys.json` after a build) as strings, e.g.
+`pebble send-app-message --emulator emery --string <KEY>=<VALUE>`.
+
+The emulator firmware has no Settings app, so Quiet Time can't be turned on there; the
+Quiet Time indicator always shows its "notifications on" state in the emulator.
+
 ## Project layout
 
 ```
@@ -93,8 +119,29 @@ src/pkjs/
   custom-clay.js      Clay extension (timezone picker, coordinate lookup)
 resources/            vector fonts (.ffont), weather/bluetooth icons (.fpath),
                       localization dictionaries (.bin), menu icon
+tools/glyphs/         scripts that add the Quiet Time bell glyphs to the fonts
 appstore/             marketing screenshots and animated showcases
 ```
+
+### Custom font glyphs
+
+The Roboto Condensed `.ffont` files (pebble‑fctx 1.6.x format) carry two extra glyphs
+for the Quiet Time indicator: a bell at code point `0x02` and a crossed‑out bell at
+`0x03`. Control‑code slots are used because the face's text pipeline only passes
+single‑byte characters (plus a `0x01` escape for U+01xx). The aplite fonts don't have
+them.
+
+The shapes are defined in `tools/glyphs/bellglyph.py`. To change them, edit that file
+and re‑apply; the script replaces its own glyphs and leaves every other character
+untouched:
+
+```bash
+python3 tools/glyphs/add_bell_glyphs.py \
+  resources/data/RobotoCondensed-{Bold,Regular}{,~diorite,~flint}.ffont
+```
+
+If a font grows, raise `FONT_BUFFER_SIZE` in `src/c/common.h` to at least the largest
+`.ffont` loaded on each platform.
 
 ## Dependencies
 
@@ -105,4 +152,3 @@ appstore/             marketing screenshots and animated showcases
 
 Weather (Open‑Meteo + Nominatim) and localization are implemented in‑project, so the
 face has no binary‑only dependencies and builds for every platform.
-~~~~

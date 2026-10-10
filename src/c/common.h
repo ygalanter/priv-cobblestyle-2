@@ -6,7 +6,8 @@
 #include <pebble-fctx/fpath.h>
 
 // Buffer must be >= the largest .ffont resource loaded on the platform.
-// (Sizes include the +2 byte cap_height field added for pebble-fctx 1.6.x.)
+// (Sizes include the +2 byte cap_height field added for pebble-fctx 1.6.x,
+//  and the bell glyphs added to non-aplite fonts by tools/glyphs/add_bell_glyphs.py.)
 #ifdef PBL_PLATFORM_APLITE
   #define FONT_BUFFER_SIZE 2454
 #else
@@ -14,9 +15,9 @@
 
   // flint reuses the diorite B&W font variant (~flint == ~diorite copy)
   #if defined(PBL_PLATFORM_DIORITE) || defined(PBL_PLATFORM_FLINT)
-    #define FONT_BUFFER_SIZE 6638
+    #define FONT_BUFFER_SIZE 7806
   #else
-    #define FONT_BUFFER_SIZE 10566
+    #define FONT_BUFFER_SIZE 11740
   #endif
 
 #endif
@@ -69,6 +70,11 @@
 #define SECONDARY_INFO_CALORIES_REST 17
 #define SECONDARY_INFO_CALORIES_ACTIVE 18
 #define SECONDARY_INFO_TIME_SLEPT 20
+#define SECONDARY_INFO_QUIET_TIME 21
+
+// Quiet Time glyphs added to the non-aplite fonts (tools/glyphs/add_bell_glyphs.py)
+#define GLYPH_BELL         "\x02"
+#define GLYPH_BELL_CROSSED "\x03"
 #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
   #define SECONDARY_INFO_HEART_RATE 19
 #endif 

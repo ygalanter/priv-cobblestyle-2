@@ -26,6 +26,7 @@ int_least32_t COORDINATES_LATITUDE, COORDINATES_LONGITUDE;
   int_least16_t ALT_TIMEZONE_OFFSET;
   uint_least16_t health_steps, health_step_goal, health_distance, health_time_active, health_calories_rest, health_calories_active, CUSTOM_STEP_GOAL;
   int_least32_t health_time_slept;
+  bool quiet_time_active;
   #if PBL_API_EXISTS(health_service_set_heart_rate_sample_period)
   uint_least32_t health_heart_rate;
   #endif
@@ -234,6 +235,15 @@ void connection_handler(bool state) {
 
 // time tick handling procedure
 void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+  
+  #ifndef PBL_PLATFORM_APLITE
+  // there's no quiet time event service, so poll it on every tick
+  bool quiet_time_now = quiet_time_is_active();
+  if (quiet_time_now != quiet_time_active) {
+    quiet_time_active = quiet_time_now;
+    layer_mark_dirty(s_main_layer);
+  }
+  #endif
   
    
   // only getting weather at givinen intervals
@@ -645,6 +655,8 @@ void handle_init() {
     update_heart_rate_sampling();
     #endif
     health_metrics_update();
+
+    quiet_time_active = quiet_time_is_active();
 
     events_app_message_request_inbox_size(450);
   #else

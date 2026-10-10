@@ -223,6 +223,10 @@ module.exports = [
               "value": "2" // #50 (- 48) = 2
             },
             { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
+            },
+            { 
               "label": "Alternative Timezone", 
               "value": "8" // #55 (- 48) = 7
             },
@@ -298,6 +302,10 @@ module.exports = [
               "value": "2" // #50 (- 48) = 2
             },
             { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
+            },
+            { 
               "label": "Alternative Timezone", 
               "value": "8" // #55 (- 48) = 7
             },
@@ -365,6 +373,10 @@ module.exports = [
               "label": "Seconds", 
               "value": "2" // #48 (- 48) = 0 
             },
+            { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
+            },
            
             { 
               "label": "12H / 24H", 
@@ -393,6 +405,10 @@ module.exports = [
             { 
               "label": "Seconds", 
               "value": "2" // #48 (- 48) = 0 
+            },
+            { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
             },
            
             { 
@@ -1034,6 +1050,10 @@ module.exports = [
               "value": "2" // #50 (- 48) = 2
             },
             { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
+            },
+            { 
               "label": "Alternative Timezone", 
               "value": "8" // #55 (- 48) = 7
             },
@@ -1117,6 +1137,10 @@ module.exports = [
               "value": "2" // #50 (- 48) = 2
             },
             { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
+            },
+            { 
               "label": "Alternative Timezone", 
               "value": "8" // #55 (- 48) = 7
             },
@@ -1197,6 +1221,10 @@ module.exports = [
             { 
               "label": "Seconds", 
               "value": "2" // #50 (- 48) = 2
+            },
+            { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
             },
             { 
               "label": "Alternative Timezone", 
@@ -1282,6 +1310,10 @@ module.exports = [
               "value": "2" // #50 (- 48) = 2
             },
             { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
+            },
+            { 
               "label": "Alternative Timezone", 
               "value": "8" // #55 (- 48) = 7
             },
@@ -1365,6 +1397,10 @@ module.exports = [
               "value": "2" // #50 (- 48) = 2
             },
             { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
+            },
+            { 
               "label": "Alternative Timezone", 
               "value": "8" // #55 (- 48) = 7
             },
@@ -1446,6 +1482,10 @@ module.exports = [
             { 
               "label": "Seconds", 
               "value": "2" // #50 (- 48) = 2
+            },
+            { 
+              "label": "Quiet Time Indicator", 
+              "value": "21"
             },
             { 
               "label": "Alternative Timezone", 

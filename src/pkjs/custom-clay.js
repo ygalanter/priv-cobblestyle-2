@@ -156,26 +156,6 @@ module.exports = function(minified) {
   
   
   
-   //masterkey lookup
-  function masterkeyLookup() {
-    
-    $.request('get', 'https://pmkey.xyz/search/?email=' + Clay.getItemById('MASTER_KEY_EMAIL').get() + '&pin=' + Clay.getItemById('MASTER_KEY_PIN').get()).then(function (str_data) {
-       var data = JSON.parse(str_data);
-      
-      if (data.success) {
-           Clay.getItemById('FORECAST_API_KEY').set(data.keys.weather.forecast);
-           Clay.getItemById('OWM_API_KEY').set(data.keys.weather.owm);
-                      
-           Clay.getItemById('WU_API_KEY').set(data.keys.weather.wu);
-      } else {
-          alert(data.error);
-      }
-
-     
-      
-       });
-  
-  }
   
   
   
@@ -416,8 +396,6 @@ module.exports = function(minified) {
     Clay.getItemById('LOCATION_BUTTON').on('click', coordinatesLookup);
      
      
-    // on clicking MasterKey lookup button - perform masterkey lookup
-    Clay.getItemById('MASTER_KEY_BUTTON').on('click', masterkeyLookup);  
      
       // time display
     var timeDisplay = Clay.getItemByMessageKey('TIME_DISPLAY');
@@ -426,11 +404,6 @@ module.exports = function(minified) {
      
     if (Clay.meta.activeWatchInfo && Clay.meta.activeWatchInfo.platform !== 'aplite') { 
       
-        // initially hiding BUY NOW 
-           var buynow = Clay.getItemByMessageKey('BUY_NOW');
-           buynow.set(0); 
-           buynow.disable();
-           buynow.hide(); 
     
 
       
